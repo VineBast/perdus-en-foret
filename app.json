@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "perdus-en-foret",
+    "slug": "perdus-en-foret",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "perdus-en-foret"
+}
