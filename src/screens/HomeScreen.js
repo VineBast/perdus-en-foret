@@ -5,10 +5,37 @@ import { Background, OptionButton } from '.././components';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { StyleSheet, View } from 'react-native';
 import { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+
+import MapViewDirections from 'react-native-maps-directions';
+import { GOOGLE_MAPS_APIKEY } from '../../.env.js';
+import { Background, OptionButton } from '.././components';
+import { colors } from '../core/theme';
+import { getUser } from '../services/firebase';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
 export function HomeScreen({ navigation }) {
   const user = useSelector(userSelector).user;
+
+  const [coordinates] = useState([
+    {
+      latitude: 48.8275168,
+      longitude: 2.3479068 + 0.007,
+    },
+    {
+      latitude: 48.838665,
+      longitude: 2.350624 + 0.007,
+    },
+    {
+      latitude: 48.8462956,
+      longitude: 2.347077 + 0.007,
+    },
+    {
+      latitude: 48.8461544,
+      longitude: 2.3484181 + 0.007,
+    },
+  ]);
 
   return (
     <Background>
@@ -21,15 +48,32 @@ export function HomeScreen({ navigation }) {
       )}
       <View style={style.container}>
         <MapView
-          provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+          showsUserLocation={true}
+          followUserLocation={true}
           style={style.map}
-          region={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
+          initialRegion={{
+            latitude: coordinates[0].latitude,
+            longitude: coordinates[0].longitude,
+            latitudeDelta: 0.032,
+            longitudeDelta: 0.032,
           }}
-        ></MapView>
+        >
+          {coordinates.map((coordinate, i) => (
+            <MapView.Marker
+              key={i}
+              coordinate={coordinate}
+              title={'title'}
+              description={'description'}
+              pinColor={colors.orange}
+            />
+          ))}
+          <MapViewDirections
+            origin={coordinates[0]}
+            destination={coordinates[3]}
+            apikey={GOOGLE_MAPS_APIKEY}
+            waypoints={[coordinates[1], coordinates[2]]}
+          />
+        </MapView>
       </View>
       <ItineraryPlannedModal navigation={navigation} />
     </Background>
@@ -39,9 +83,7 @@ export function HomeScreen({ navigation }) {
 const style = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    height: '100%',
-    width: '100%',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   map: {
