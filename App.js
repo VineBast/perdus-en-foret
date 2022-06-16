@@ -1,38 +1,69 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { Provider } from 'react-native-paper';
+import { theme } from './src/core/theme';
+import {
+  HomeScreen,
+  ItineraryScreen,
+  ResetPasswordScreen,
+  SettingsScreen,
+  SignUpScreen,
+  StartScreen,
+} from './src/screens';
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  
+  const [isSplashScreenVisible, setIsSplashScreenVisible] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setIsSplashScreenVisible(false), 0);
+  }, []);
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <MapView
-        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-        style={styles.map}
-        region={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.0121,
-        }}
-      >
-      </MapView>
-      <StatusBar style="auto" />
-    </View>
+    <Provider theme={theme}>
+      {isSplashScreenVisible ? (
+        <View style={style.splashScreenContainer}>
+          <Image
+            style={{ width: 300, height: 300 }}
+            source={{ uri: 'https://docs.ypariset.fr/img/logo-pef.png' }}
+          ></Image>
+        </View>
+      ) : (
+        <></>
+      )}
+
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName='StartScreen'
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name='ItineraryScreen' component={ItineraryScreen} />
+          <Stack.Screen name='StartScreen' component={StartScreen} />
+          <Stack.Screen name='SignUpScreen' component={SignUpScreen} />
+          <Stack.Screen name='HomeScreen' component={HomeScreen} />
+          <Stack.Screen name='SettingsScreen' component={SettingsScreen} />
+          <Stack.Screen
+            name='ResetPasswordScreen'
+            component={ResetPasswordScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-    height: 400,
-    width: 400,
-    justifyContent: 'flex-end',
+const style = StyleSheet.create({
+  splashScreenContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    backgroundColor: 'white',
+    zIndex: 100000,
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
   },
 });
