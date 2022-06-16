@@ -78,9 +78,11 @@ const style = StyleSheet.create({
     top: 20 + getStatusBarHeight(),
     right: 20,
     alignItems: 'center',
+    zIndex: 99999,
   },
   smallButton: { width: 40, height: 40, marginTop: 5 },
   buttonRounded: {
+    backgroundColor: colors.white,
     borderWidth: 1,
     width: 50,
     height: 50,
