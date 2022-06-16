@@ -1,9 +1,8 @@
-import { Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Pressable, StyleSheet, Text, TouchableOpacity, Image, View } from 'react-native';
 import { colors } from '../../core/theme';
+import { Ionicons } from '@expo/vector-icons';
 
-// Utilisation :
-// <SubmitButton orange onPress={yourFunction} style={{ paddingVertical: 40 }} />
-export function SubmitButton({
+export function SettingButton({
   label = 'Test du label',
   style,
   ...props
@@ -11,28 +10,37 @@ export function SubmitButton({
   return (
     <TouchableOpacity
       {...props}
+      activeOpacity={0.8}
       style={[
-        styles.button,
-        { backgroundColor: orange ? colors.orange : colors.green },
+        styles.pressable,  
         style,
       ]}
     >
+    <View style={{ width: 25, height: 25, borderRadius: 6, backgroundColor:colors.yellow, justifyContent:'center', alignItems:'center' }}>
+        <Ionicons name={'star'} size={15} color={colors.white}></Ionicons>
+    </View>
       <Text style={styles.text}>{label}</Text>
+      <Ionicons name={'chevron-forward-outline'} size={20} color={colors.green}></Ionicons>
     </TouchableOpacity>
+
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
+  pressable: {
     width: '100%',
-    marginVertical: 10,
-    paddingVertical: 22,
-    borderRadius: 8,
+    flex: 1,
+    alignItems: "center",
+    justifyContent:'space-between',
+    flexDirection: 'row',
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    backgroundColor: colors.input,
+    borderTopWidth: 0.5,
+    borderColor: colors.darkGreen,
   },
   text: {
-    fontWeight: 'bold',
-    fontSize: 17,
-    lineHeight: 18,
+    fontSize: 14,
     color: colors.white,
     textAlign: 'center',
   },
