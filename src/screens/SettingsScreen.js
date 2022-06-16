@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/core';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-elements';
-import { BackButton, Background } from '../components';
+import { BackButton, Background, SubmitButton } from '../components';
 import { colors, theme } from '../core/theme';
 import { getUser, logout } from '../services/firebase';
 
@@ -19,14 +19,15 @@ export function SettingsScreen() {
       <BackButton white goBack={navigation.goBack} />
       <View>
         <Text style={styles.text}>Email: {user?.email}</Text>
-        <Button
+        <SubmitButton
+        orange
           style={styles.button}
-          title='Logout'
+          label='Déconnexion'
           onPress={() => logout(navigation)}
           buttonStyle={{ backgroundColor: theme.colors.primary }}
         >
           Log out
-        </Button>
+        </SubmitButton>
       </View>
     </Background>
   );
