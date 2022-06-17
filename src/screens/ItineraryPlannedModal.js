@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import uuid from 'react-native-uuid';
+import { useSelector } from 'react-redux';
 import {
   AddPointButton,
   FilterModalSwitch,
@@ -12,12 +13,15 @@ import {
   TopIndicator,
 } from '../components';
 import { colors, general, position } from '../core/theme';
+import { userSelector } from '../redux/userSlice';
 
 export function ItineraryPlannedModal({ navigation, geoPoints }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentItinerary, setCurrentItinerary] = useState(null);
   const [userItineraries, setUserItineraries] = useState([]);
   const [isFavoriteSelected, setIsFavoriteSelected] = useState(false);
+
+  const user = useSelector(userSelector).user;
 
   useEffect(() => {
     setCurrentItinerary({
@@ -28,92 +32,7 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
         { id: uuid.v4(), lat: '', lng: '' },
       ],
     });
-    setUserItineraries([
-      {
-        id: uuid.v4(),
-        type: 'recent',
-        points: [
-          { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-          { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-          { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-        ],
-        date: '12/06/2022',
-        name: 'Petit rocher',
-      },
-      {
-        id: uuid.v4(),
-        type: 'recent',
-        points: [
-          { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-          { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-          { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-        ],
-        date: '12/06/2022',
-        name: '',
-      },
-      {
-        id: uuid.v4(),
-        type: 'recent',
-        points: [
-          { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-          { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-          { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-        ],
-        date: '12/06/2022',
-        name: 'Gros rocher',
-      },
-      {
-        id: uuid.v4(),
-        type: 'favorite',
-        points: [
-          { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-          { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-          { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-        ],
-        date: '12/06/2022',
-        name: 'Gros rocher',
-      },
-      {
-        id: uuid.v4(),
-        type: 'favorite',
-        points: [
-          { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-          { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-          { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-        ],
-        date: '12/06/2022',
-        name: 'Petit rocher',
-      },
-      {
-        id: uuid.v4(),
-        type: 'favorite',
-        points: [
-          { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-          { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-          { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-        ],
-        date: '12/06/2022',
-        name: 'Mairie des Lilas',
-      },
-      {
-        id: uuid.v4(),
-        type: 'favorite',
-        points: [
-          { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-          { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-          { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-        ],
-        date: '12/06/2022',
-        name: '',
-      },
-    ]);
+    setUserItineraries(user.itineraries);
   }, []);
 
   const openItineraryScreen = () => {

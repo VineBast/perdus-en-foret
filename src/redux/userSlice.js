@@ -7,10 +7,13 @@ const userSlice = createSlice({
     addUserInRedux: (state, action) => {
       return action.payload;
     },
+    addItinerary: (state, action) => {
+      return { ...state, itineraries: [...state.itineraries, action.payload] };
+    },
   },
 });
 
-export const { addUserInRedux } = userSlice.actions;
+export const { addUserInRedux, addItinerary } = userSlice.actions;
 export const userSelector = (state) => state;
 
 export default userSlice.reducer;

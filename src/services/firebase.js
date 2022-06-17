@@ -11,6 +11,7 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
+import uuid from 'react-native-uuid';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -44,7 +45,32 @@ const createUser = async (newUser, navigation) => {
         lastName: newUser.lastName,
         email: newUser.email,
         tel: newUser.tel,
-        favoris: [],
+        itineraries: [
+          {
+            id: uuid.v4(),
+            type: 'recent',
+            points: [
+              { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
+              { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
+              { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
+              { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
+            ],
+            date: '12/06/2022',
+            name: 'Petit rocher',
+          },
+          {
+            id: uuid.v4(),
+            type: 'favorite',
+            points: [
+              { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
+              { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
+              { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
+              { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
+            ],
+            date: '12/06/2022',
+            name: 'Gros rocher',
+          },
+        ],
         uid: user.uid,
       });
     })
