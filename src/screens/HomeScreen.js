@@ -1,29 +1,20 @@
-import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 import { Background, OptionButton, Paragraph } from '.././components';
-import { getUser } from '../services/firebase';
+import { userSelector } from '../redux/userSlice';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
 export function HomeScreen({ navigation }) {
-  const [user, setUser] = useState(undefined);
-
-  useEffect(() => {
-    async function fetchUser() {
-      setUser(await getUser());
-    }
-    fetchUser();
-  }, []);
+  const user = useSelector(userSelector).user;
 
   return (
     <Background>
       <OptionButton navigation={navigation} />
-      {user ? (
+      {user && (
         <>
           <Paragraph>{`Bonjour ${user?.lastName} vous êtes bien connecté.`}</Paragraph>
-          <Paragraph>{user?.email}</Paragraph>
+          <Paragraph>{user?.lastName}</Paragraph>
         </>
-      ) : (
-        <></>
       )}
       <ItineraryPlannedModal navigation={navigation} />
     </Background>

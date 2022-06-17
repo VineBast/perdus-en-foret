@@ -1,26 +1,22 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import {
-  Background,
-  ClassicButton,
-  Header,
-  Paragraph,
-  SubmitButton,
-  TextInput,
-  Title
-} from '../../components';
+import { useDispatch } from 'react-redux';
+import { Background, SubmitButton, TextInput, Title } from '../../components';
 import { colors } from '../../core/theme';
-import { auth, userLogin } from '../../services/firebase';
-
+import { addUserInRedux } from '../../redux/userSlice';
+import { auth, getUser, userLogin } from '../../services/firebase';
 
 export function StartScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  //Redux
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
+        dispatch(addUserInRedux(await getUser()));
         navigation.replace('HomeScreen');
       }
     });
@@ -28,7 +24,7 @@ export function StartScreen({ navigation }) {
 
   return (
     <Background>
-      <View style={{width: '80%'}}>
+      <View style={{ width: '80%' }}>
         <Title>Se connecter ou s’inscrire</Title>
         <TextInput
           label='Email'
@@ -51,28 +47,36 @@ export function StartScreen({ navigation }) {
           <TouchableOpacity
             onPress={() => navigation.navigate('ResetPasswordScreen')}
           >
-            <Text style={{color: colors.grey3}}>Mot de passe oublié ?</Text>
+            <Text style={{ color: colors.grey3 }}>Mot de passe oublié ?</Text>
           </TouchableOpacity>
         </View>
-        <SubmitButton 
-          style={{ padding: 20 }} 
-          label="Se connecter"  
-          onPress={() => userLogin(email, password)} 
+        <SubmitButton
+          style={{ padding: 20 }}
+          label='Se connecter'
+          onPress={() => userLogin(email, password)}
         />
         <View style={style.textSignUp}>
-          <Text style={{color: colors.grey3}}>Vous n'avez pas encore de compte ? </Text>
+          <Text style={{ color: colors.grey3 }}>
+            Vous n'avez pas encore de compte ?{' '}
+          </Text>
           <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
-            <Text style={{color: colors.green, fontWeight:'bold'}}>S'inscrire</Text>
+            <Text style={{ color: colors.green, fontWeight: 'bold' }}>
+              S'inscrire
+            </Text>
           </TouchableOpacity>
         </View>
-        <View style={{alignItems: 'center', justifyContent:'center' }}>
-          <Text style={{color: '#000', fontWeight:'bold', marginVertical: 20}}>OU</Text>
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+          <Text
+            style={{ color: '#000', fontWeight: 'bold', marginVertical: 20 }}
+          >
+            OU
+          </Text>
         </View>
-        <SubmitButton 
-        orange 
-        style={{ padding: 20 }} 
-        label="Continuer sans créer de compte"  
-        onPress={() => navigation.navigate('HomeScreen')} 
+        <SubmitButton
+          orange
+          style={{ padding: 20 }}
+          label='Continuer sans créer de compte'
+          onPress={() => navigation.navigate('HomeScreen')}
         />
       </View>
     </Background>
@@ -84,11 +88,11 @@ const style = StyleSheet.create({
     width: '100%',
     alignItems: 'flex-end',
     marginBottom: 24,
-    marginRight: 30
+    marginRight: 30,
   },
   textSignUp: {
     marginTop: 100,
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });

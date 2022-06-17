@@ -1,20 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSelector } from 'react-redux';
 import { colors } from '../../core/theme';
-import { getUser, logout } from '../../services/firebase';
+import { userSelector } from '../../redux/userSlice';
+import { logout } from '../../services/firebase';
 
 export function OptionButton({ navigation }) {
   const [optionOpen, setOptionOpen] = useState(false);
-  const [user, setUser] = useState(undefined);
-
-  useEffect(() => {
-    async function fetchUser() {
-      setUser(await getUser());
-    }
-    fetchUser();
-  }, []);
+  const user = useSelector(userSelector).user;
 
   const renderOptions = () => {
     if (optionOpen) {

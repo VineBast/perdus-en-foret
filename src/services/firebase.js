@@ -65,7 +65,7 @@ const getUser = async () => {
     });
 
     return data;
-  } else return undefined;
+  } else return {};
 };
 
 // Exemple call updateUser() : 👇

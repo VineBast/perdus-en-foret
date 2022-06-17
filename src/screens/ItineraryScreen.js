@@ -1,18 +1,11 @@
-import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useSelector } from 'react-redux';
 import { BackButton, Background, OptionButton, Paragraph } from '../components';
 import { colors, general } from '../core/theme';
-import { getUser } from '../services/firebase';
+import { userSelector } from '../redux/userSlice';
 
 export function ItineraryScreen({ navigation }) {
-  const [user, setUser] = useState(undefined);
-
-  useEffect(() => {
-    async function fetchUser() {
-      setUser(await getUser());
-    }
-    fetchUser();
-  }, []);
+  const user = useSelector(userSelector).user;
 
   return (
     <Background>

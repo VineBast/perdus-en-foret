@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useSelector } from 'react-redux';
 import {
   BackButton,
   Background,
@@ -8,17 +8,11 @@ import {
   SubmitButton,
 } from '../components';
 import { colors, theme } from '../core/theme';
-import { getUser, logout } from '../services/firebase';
+import { userSelector } from '../redux/userSlice';
+import { logout } from '../services/firebase';
 
 export function SettingsScreen({ navigation }) {
-  const [user, setUser] = useState(undefined);
-
-  useEffect(() => {
-    async function fetchUser() {
-      setUser(await getUser());
-    }
-    fetchUser();
-  }, []);
+  const user = useSelector(userSelector).user;
 
   return (
     <Background style={styles.container}>
