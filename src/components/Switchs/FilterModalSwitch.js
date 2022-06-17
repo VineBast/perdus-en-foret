@@ -12,28 +12,28 @@ export function FilterModalSwitch({ style, isFavoriteSelected, onPress }) {
   return (
     <View style={[styles.container, style]}>
       <Pressable
-        onPress={!isFavoriteSelected ? onPress : undefined}
+        onPress={isFavoriteSelected ? onPress : undefined}
         style={[
           styles.buttons,
           styles.recent,
           {
             backgroundColor: isFavoriteSelected
-              ? colors.lightGreen
-              : colors.mediumGreen,
+              ? colors.mediumGreen
+              : colors.lightGreen
           },
         ]}
       >
         <Ionicons name={'time'} size={20} color={colors.white} />
       </Pressable>
       <Pressable
-        onPress={isFavoriteSelected ? onPress : undefined}
+        onPress={!isFavoriteSelected ? onPress : undefined}
         style={[
           styles.buttons,
           styles.favory,
           {
             backgroundColor: isFavoriteSelected
-              ? colors.mediumGreen
-              : colors.lightGreen,
+              ? colors.lightGreen
+              : colors.mediumGreen
           },
         ]}
       >
