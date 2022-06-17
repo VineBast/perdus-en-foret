@@ -2,7 +2,14 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { addDoc, collection, getFirestore, query, where, getDocs } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -40,9 +47,7 @@ const createUser = async (newUser, navigation) => {
       lastName: newUser.lastName,
       email: newUser.email,
       tel: newUser.tel,
-      favoris: [
-        { name: 'premier favori', coordonnées: [{ x: '216', y: '893' }] },
-      ],
+      favoris: [],
     });
     console.log('Document written with ID: ', docRef.id);
   } catch (e) {
@@ -50,23 +55,25 @@ const createUser = async (newUser, navigation) => {
   }
 };
 
-const getUser = () => {
+const getUser = async () => {
   if (auth.currentUser !== null) {
-    console.log(auth.currentUser)
-    return auth.currentUser;
-  }
-  return undefined;
+    console.log('firebase', auth.currentUser);
+    const q = query(
+      collection(db, 'users'),
+      where('email', '==', auth.currentUser.email)
+    );
+
+    let data;
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      data = doc.data();
+    });
+
+    return data;
+  } else return undefined;
 };
 
-const getUserFirestore = async () => {
-  const q = query(collection(db, "users"), where("email", "==", auth.currentUser.email));
-
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, " => ", doc.data());
-  });
-};
+const setUser = async (userEmail, updateUser) => {};
 
 const logout = (navigation) => {
   auth
@@ -95,4 +102,4 @@ const resetPasswordEmail = (navigation) => {
   navigation.navigate('StartScreen');
 };
 
-export { auth, createUser, userLogin, getUser, getUserFirestore, logout, resetPasswordEmail };
+export { auth, createUser, userLogin, getUser, logout, resetPasswordEmail };

@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import {
-  Background,
-  OptionButton,
-  Paragraph,
-} from '.././components';
-import { getUser, getUserFirestore } from '../services/firebase';
+import { Background, OptionButton, Paragraph } from '.././components';
+import { getUser } from '../services/firebase';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
 export function HomeScreen({ navigation }) {
   const [user, setUser] = useState(undefined);
-  const [userFirestore, SetUserFirestore] = useState(undefined);
 
   useEffect(() => {
-    setUser(getUser())
-    SetUserFirestore(getUserFirestore());
+    const fetchUser = async () => {
+      setUser(await getUser());
+    };
+    fetchUser();
   }, []);
 
   return (
@@ -22,8 +19,8 @@ export function HomeScreen({ navigation }) {
       <OptionButton navigation={navigation} />
       {user ? (
         <>
-          <Paragraph>{`Bonjour ${userFirestore?.lastName} vous êtes bien connecté.`}</Paragraph>
-          <Paragraph>{user?.email}</Paragraph>
+          <Paragraph>{`Bonjour ${user?.lastName} vous êtes bien connecté.`}</Paragraph>
+          <Paragraph>{user?.lastName}</Paragraph>
         </>
       ) : (
         <></>
