@@ -5,35 +5,35 @@ import { colors } from '../../core/theme';
 // Utilisation;
 // <FilterModalSwitch
 //   onPress={onToggleFilterPress}
-//   isFavorySelected={isFavorySelected}
+//   isFavoriteSelected={isFavoriteSelected}
 //   style={{ marginRight: 5 }}
 // />;
-export function FilterModalSwitch({ style, isFavorySelected, onPress }) {
+export function FilterModalSwitch({ style, isFavoriteSelected, onPress }) {
   return (
     <View style={[styles.container, style]}>
       <Pressable
-        onPress={!isFavorySelected ? onPress : undefined}
+        onPress={isFavoriteSelected ? onPress : undefined}
         style={[
           styles.buttons,
           styles.recent,
           {
-            backgroundColor: isFavorySelected
-              ? colors.lightGreen
-              : colors.mediumGreen,
+            backgroundColor: isFavoriteSelected
+              ? colors.mediumGreen
+              : colors.lightGreen
           },
         ]}
       >
         <Ionicons name={'time'} size={20} color={colors.white} />
       </Pressable>
       <Pressable
-        onPress={isFavorySelected ? onPress : undefined}
+        onPress={!isFavoriteSelected ? onPress : undefined}
         style={[
           styles.buttons,
           styles.favory,
           {
-            backgroundColor: isFavorySelected
-              ? colors.mediumGreen
-              : colors.lightGreen,
+            backgroundColor: isFavoriteSelected
+              ? colors.lightGreen
+              : colors.mediumGreen
           },
         ]}
       >
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 4,
   },
   recent: {
     borderTopLeftRadius: 8,
