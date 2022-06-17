@@ -1,32 +1,41 @@
 import { useNavigation } from '@react-navigation/core';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-elements';
-import { BackButton, Background } from '../components';
+import { BackButton, Background, ProfileButton, SettingButton, SubmitButton, } from '../components';
 import { colors, theme } from '../core/theme';
 import { getUser, logout } from '../services/firebase';
 
-export function SettingsScreen() {
+
+export function SettingsScreen({navigation}) {
   const [user, setUser] = useState(undefined);
-  const navigation = useNavigation();
 
   useEffect(() => {
-    setUser(getUser());
+    async function user() {
+      setUser(await getUser())
+    }
+    user();
   }, []);
 
   return (
     <Background style={styles.container}>
       <BackButton white goBack={navigation.goBack} />
-      <View>
-        <Text style={styles.text}>Email: {user?.email}</Text>
-        <Button
+      <View style={{height: '100%', width: '100%', marginTop: 200}}>
+        <View style={{marginBottom:300}}>
+        <ProfileButton name={user?.firstName} mail={user?.email} tel={user?.tel} navigation={navigation} ></ProfileButton>
+        <SettingButton label='Itininéraires favoris'></SettingButton>
+        <SettingButton label='Option 1'></SettingButton>
+        <SettingButton label='Option 1'></SettingButton>
+        <SettingButton label='Option 1'></SettingButton>
+        </View>
+        <SubmitButton
+        orange
           style={styles.button}
-          title='Logout'
+          label='Déconnexion'
           onPress={() => logout(navigation)}
           buttonStyle={{ backgroundColor: theme.colors.primary }}
         >
           Log out
-        </Button>
+        </SubmitButton>
       </View>
     </Background>
   );
@@ -34,11 +43,12 @@ export function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: colors.darkGreen,
   },
 
   button: {
     padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

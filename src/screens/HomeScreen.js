@@ -2,18 +2,21 @@ import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import {
   Background,
-  Header,
-  Logo,
   OptionButton,
   Paragraph,
 } from '.././components';
-import { getUser } from '../services/firebase';
+import { getUser, getUserFirestore } from '../services/firebase';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
 export function HomeScreen({ navigation }) {
   const [user, setUser] = useState(undefined);
+  console.log(user)
+
   useEffect(() => {
-    setUser(getUser());
+    async function user() {
+      setUser(await getUser())
+    }
+    user();
   }, []);
 
   return (

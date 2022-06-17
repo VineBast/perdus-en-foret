@@ -2,7 +2,15 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { addDoc, collection, getFirestore } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  getFirestore,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -31,30 +39,54 @@ const createUser = async (newUser, navigation) => {
     .then((userCredentials) => {
       const user = userCredentials.user;
       navigation.replace('HomeScreen');
-      console.log('Inscrit en tant que ', user.email);
+      setDoc(doc(db, 'users', user.uid), {
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        tel: newUser.tel,
+        favoris: [],
+        uid: user.uid,
+      });
     })
     .catch((error) => alert(error.message));
-  try {
-    const docRef = await addDoc(collection(db, 'users'), {
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
-      email: newUser.email,
-      tel: newUser.tel,
-      favoris: [
-        { name: 'premier favori', coordonnées: [{ x: '216', y: '893' }] },
-      ],
-    });
-    console.log('Document written with ID: ', docRef.id);
-  } catch (e) {
-    console.error('Error adding document: ', e);
-  }
 };
 
-const getUser = () => {
+const getUser = async () => {
   if (auth.currentUser !== null) {
-    return auth.currentUser;
-  }
-  return undefined;
+    const q = query(
+      collection(db, 'users'),
+      where('email', '==', auth.currentUser.email)
+    );
+
+    let data;
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      data = doc.data();
+    });
+
+    return data;
+  } else return undefined;
+};
+
+// Exemple call updateUser() : 👇
+//   if (user) {
+//     async function test() {
+//       await updateUser({
+//         ...user,
+//         favoris: ['coucou', 'test'],
+//       });
+//     }
+//     test();
+//   }
+const updateUser = async (userUpdate) => {
+  await setDoc(doc(db, 'users', userUpdate.uid), {
+    firstName: userUpdate.firstName,
+    lastName: userUpdate.lastName,
+    email: userUpdate.email,
+    tel: userUpdate.tel,
+    favoris: userUpdate.favoris,
+    uid: userUpdate.uid,
+  });
 };
 
 const logout = (navigation) => {
@@ -84,4 +116,12 @@ const resetPasswordEmail = (navigation) => {
   navigation.navigate('StartScreen');
 };
 
-export { auth, createUser, userLogin, getUser, logout, resetPasswordEmail };
+export {
+  auth,
+  createUser,
+  userLogin,
+  getUser,
+  logout,
+  resetPasswordEmail,
+  updateUser,
+};
