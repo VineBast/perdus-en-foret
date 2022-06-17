@@ -6,12 +6,14 @@ import { colors, theme } from '../core/theme';
 import { getUser, logout } from '../services/firebase';
 
 
-export function SettingsScreen() {
+export function SettingsScreen({navigation}) {
   const [user, setUser] = useState(undefined);
-  const navigation = useNavigation();
 
   useEffect(() => {
-    setUser(getUser());
+    async function user() {
+      setUser(await getUser())
+    }
+    user();
   }, []);
 
   return (
@@ -19,7 +21,7 @@ export function SettingsScreen() {
       <BackButton white goBack={navigation.goBack} />
       <View style={{height: '100%', width: '100%', marginTop: 200}}>
         <View style={{marginBottom:300}}>
-        <ProfileButton name="Alice Smith" mail={user?.email} tel="+336224455"></ProfileButton>
+        <ProfileButton name={user?.firstName} mail={user?.email} tel={user?.tel} navigation={navigation} ></ProfileButton>
         <SettingButton label='Itininéraires favoris'></SettingButton>
         <SettingButton label='Option 1'></SettingButton>
         <SettingButton label='Option 1'></SettingButton>

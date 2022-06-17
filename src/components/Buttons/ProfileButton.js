@@ -1,17 +1,20 @@
 import { Pressable, StyleSheet, Text, TouchableOpacity, Image, View} from 'react-native';
 import { colors } from '../../core/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { getUser } from '../../services/firebase';
 
 export function ProfileButton({
   name,
   tel,
   mail,
   style,
+  navigation,
   ...props
 }) {
   return (
     <TouchableOpacity
       {...props}
+      onPress={() => navigation.navigate('UpdateScreen')}
       activeOpacity={0.8}
       style={[
         styles.pressable,
