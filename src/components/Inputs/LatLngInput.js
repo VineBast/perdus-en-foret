@@ -1,12 +1,18 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useEffect } from 'react';
 import { useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { colors, position } from '../../core/theme';
 import { CircleIcon, MarkerIcon } from '../Icons';
 
-export function LatLngInput({ lat = '', lng = '', style, isLast = false }) {
-  const [latInput, setLatInput] = useState(lat);
-  const [lngInput, setLngInput] = useState(lng);
+export function LatLngInput({ point, style, isLast, showDelete, handleDelete, onChange }) {
+  const [latInput, setLatInput] = useState(point.lat);
+  const [lngInput, setLngInput] = useState(point.lng);
+
+  useEffect(() => {
+    onChange({lat: latInput, lng: lngInput});
+  }, [latInput, lngInput]);
 
   return (
     <View style={styles.container}>
@@ -51,6 +57,15 @@ export function LatLngInput({ lat = '', lng = '', style, isLast = false }) {
           placeholder='lng...'
           placeholderTextColor={colors.disabledText}
         />
+        {showDelete && (
+          <TouchableOpacity
+            activeOpacity={0.4}
+            onPress={() => handleDelete(point.id)}
+            style={styles.deleteWrapper}
+          >
+            <Ionicons name='close-outline' size={14} color={colors.dark} />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -91,4 +106,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey,
     marginHorizontal: 14,
   },
+  deleteWrapper: {
+    padding: 4,
+    backgroundColor: '#eee',
+    borderRadius: 50
+  }
 });
