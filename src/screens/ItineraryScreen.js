@@ -8,7 +8,10 @@ export function ItineraryScreen({ navigation }) {
   const [user, setUser] = useState(undefined);
 
   useEffect(() => {
-    setUser(getUser());
+    async function fetchUser() {
+      setUser(await getUser());
+    }
+    fetchUser();
   }, []);
 
   return (

@@ -1,19 +1,11 @@
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View} from 'react-native';
-import { colors } from '../../core/theme';
+import { StyleSheet, Text, View } from 'react-native';
 import { BackButton, Background } from '../../components';
-
+import { colors } from '../../core/theme';
 
 export function UpdateScreen({ navigation }) {
-
-
-  useEffect(() => {
- 
-  }, []);
-
   return (
     <Background style={style.container}>
-    <BackButton white goBack={navigation.goBack} />
+      <BackButton white goBack={navigation.goBack} />
       <View>
         <Text>UpdateScreen</Text>
       </View>
@@ -22,8 +14,7 @@ export function UpdateScreen({ navigation }) {
 }
 
 const style = StyleSheet.create({
-    container: {
-        backgroundColor: colors.darkGreen,
-      },
-
+  container: {
+    backgroundColor: colors.darkGreen,
+  },
 });

@@ -1,31 +1,32 @@
 import { useEffect, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import { LatLngInput, SubmitButton, SwitchArrowIcon, Modal, TopIndicator, FilterModalSwitch, AddPointButton, MarkerIcon, ListWithOptions } from '../components';
-import { colors, general, position } from '../core/theme';
-import { getUser } from '../services/firebase';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import uuid from 'react-native-uuid';
+import {
+  AddPointButton,
+  FilterModalSwitch,
+  LatLngInput,
+  ListWithOptions,
+  Modal,
+  SubmitButton,
+  SwitchArrowIcon,
+  TopIndicator,
+} from '../components';
+import { colors, general, position } from '../core/theme';
 
 export function ItineraryPlannedModal({ navigation, geoPoints }) {
-  const [user, setUser] = useState(undefined);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentItinerary, setCurrentItinerary] = useState(null);
   const [userItineraries, setUserItineraries] = useState([]);
   const [isFavoriteSelected, setIsFavoriteSelected] = useState(false);
 
   useEffect(() => {
-    setUser(getUser());
     setCurrentItinerary({
       id: uuid.v4(),
       name: '',
       points: [
         { id: uuid.v4(), lat: '', lng: '' },
-        { id: uuid.v4(), lat: '', lng: '' }
-      ]
+        { id: uuid.v4(), lat: '', lng: '' },
+      ],
     });
     setUserItineraries([
       {
@@ -35,7 +36,7 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
           { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
           { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
           { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' }
+          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
         ],
         date: '12/06/2022',
         name: 'Petit rocher',
@@ -47,7 +48,7 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
           { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
           { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
           { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' }
+          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
         ],
         date: '12/06/2022',
         name: '',
@@ -59,7 +60,7 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
           { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
           { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
           { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' }
+          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
         ],
         date: '12/06/2022',
         name: 'Gros rocher',
@@ -71,7 +72,7 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
           { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
           { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
           { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' }
+          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
         ],
         date: '12/06/2022',
         name: 'Gros rocher',
@@ -83,7 +84,7 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
           { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
           { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
           { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' }
+          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
         ],
         date: '12/06/2022',
         name: 'Petit rocher',
@@ -95,7 +96,7 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
           { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
           { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
           { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' }
+          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
         ],
         date: '12/06/2022',
         name: 'Mairie des Lilas',
@@ -107,7 +108,7 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
           { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
           { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
           { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' }
+          { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
         ],
         date: '12/06/2022',
         name: '',
@@ -123,19 +124,18 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
   const addPoint = () => {
     setCurrentItinerary({
       ...currentItinerary,
-      points: [
-        ...currentItinerary.points,
-        { id: uuid.v4(), lat: '', lng: '' }
-      ]
+      points: [...currentItinerary.points, { id: uuid.v4(), lat: '', lng: '' }],
     });
   };
 
   const deletePoint = (id) => {
-    const filteredPoints = currentItinerary.points.filter(point => point.id !== id);
+    const filteredPoints = currentItinerary.points.filter(
+      (point) => point.id !== id
+    );
 
     setCurrentItinerary({
       ...currentItinerary,
-      points: filteredPoints
+      points: filteredPoints,
     });
   };
 
@@ -144,25 +144,31 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
 
     setCurrentItinerary({
       ...currentItinerary,
-      points: reversedPoints
+      points: reversedPoints,
     });
   };
 
   const onChangeInput = ({ id, lat, lng }) => {
-    const modifiedPoints = currentItinerary.points.map(point => point.id === id ? ({ ...point, lat: lat, lng: lng }) : point);
+    const modifiedPoints = currentItinerary.points.map((point) =>
+      point.id === id ? { ...point, lat: lat, lng: lng } : point
+    );
 
     setCurrentItinerary({
       ...currentItinerary,
-      points: modifiedPoints
+      points: modifiedPoints,
     });
   };
 
   const setSpecificItinerary = (id) => {
-    setCurrentItinerary(userItineraries.find(itinerary => itinerary.id === id))
+    setCurrentItinerary(
+      userItineraries.find((itinerary) => itinerary.id === id)
+    );
   };
 
   const deleteItineraryById = (id) => {
-    setUserItineraries(userItineraries.filter(itinerary => itinerary.id !== id));
+    setUserItineraries(
+      userItineraries.filter((itinerary) => itinerary.id !== id)
+    );
   };
 
   const ModalCloseContainer = () => (
@@ -184,39 +190,46 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
           >
             <View style={{ flex: 1 }} onStartShouldSetResponder={() => true}>
               <View style={[position.columnCenter, { paddingHorizontal: 27 }]}>
-                <SubmitButton label="Voir l'itinéraire" onPress={openItineraryScreen} style={{ marginVertical: 0 }} />
+                <SubmitButton
+                  label="Voir l'itinéraire"
+                  onPress={openItineraryScreen}
+                  style={{ marginVertical: 0 }}
+                />
               </View>
-              <View
-                style={[position.rowCenter, { marginTop: 14 }]}
-              >
+              <View style={[position.rowCenter, { marginTop: 14 }]}>
                 <View style={{ flex: 1 }}>
-                  {currentItinerary && currentItinerary.points.map((point, i, points) => {
-                    const isLast = i === points.length - 1;
-                    return (
-                      <LatLngInput
-                        key={point.id}
-                        point={point}
-                        isLast={isLast}
-                        showDelete={points.length > 2}
-                        handleDelete={(id) => deletePoint(id)}
-                        onChange={({ lat, lng }) => onChangeInput({ id: point.id, lat: lat, lng: lng })}
-                        style={{ marginBottom: isLast ? 0 : 10 }}
-                      />
-                    );
-                  })}
+                  {currentItinerary &&
+                    currentItinerary.points.map((point, i, points) => {
+                      const isLast = i === points.length - 1;
+                      return (
+                        <LatLngInput
+                          key={point.id}
+                          point={point}
+                          isLast={isLast}
+                          showDelete={points.length > 2}
+                          handleDelete={(id) => deletePoint(id)}
+                          onChange={({ lat, lng }) =>
+                            onChangeInput({ id: point.id, lat: lat, lng: lng })
+                          }
+                          style={{ marginBottom: isLast ? 0 : 10 }}
+                        />
+                      );
+                    })}
                 </View>
                 <SwitchArrowIcon color='#fff' onPress={reverseGeoPoints} />
               </View>
-              <View style={[position.rowSpace, { marginTop: 14, alignItems: 'stretch' }]}>
+              <View
+                style={[
+                  position.rowSpace,
+                  { marginTop: 14, alignItems: 'stretch' },
+                ]}
+              >
                 <FilterModalSwitch
                   onPress={() => setIsFavoriteSelected(!isFavoriteSelected)}
                   isFavoriteSelected={isFavoriteSelected}
                   style={{ marginRight: 5 }}
                 />
-                <AddPointButton
-                  onPress={addPoint}
-                  style={{ marginLeft: 5 }}
-                />
+                <AddPointButton onPress={addPoint} style={{ marginLeft: 5 }} />
               </View>
               {userItineraries && (
                 <ListWithOptions
@@ -263,5 +276,5 @@ const style = StyleSheet.create({
     borderTopLeftRadius: general.bigBorderRadius,
     borderTopRightRadius: general.bigBorderRadius,
     width: '100%',
-  }
+  },
 });
