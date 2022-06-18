@@ -1,17 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { colors, position } from '../../core/theme';
 import { CircleIcon, MarkerIcon } from '../Icons';
 
-export function LatLngInput({ point, style, isLast, showDelete, handleDelete, onChange }) {
-  const [latInput, setLatInput] = useState(point.lat);
-  const [lngInput, setLngInput] = useState(point.lng);
-
+export function LatLngInput({
+  point,
+  style,
+  isLast,
+  showDelete,
+  handleDelete,
+  onChange,
+}) {
+  const [latInput, setLatInput] = useState(point.latitude.toString());
+  const [lngInput, setLngInput] = useState(point.longitude.toString());
   useEffect(() => {
-    onChange({lat: latInput, lng: lngInput});
+    onChange({ latitude: latInput, longitude: lngInput });
   }, [latInput, lngInput]);
 
   return (
@@ -46,7 +51,7 @@ export function LatLngInput({ point, style, isLast, showDelete, handleDelete, on
           style={styles.input}
           onChangeText={setLatInput}
           value={latInput}
-          placeholder='lat...'
+          placeholder='latitude...'
           placeholderTextColor={colors.disabledText}
         />
         <View style={styles.separator} />
@@ -54,7 +59,7 @@ export function LatLngInput({ point, style, isLast, showDelete, handleDelete, on
           style={styles.input}
           onChangeText={setLngInput}
           value={lngInput}
-          placeholder='lng...'
+          placeholder='longitude...'
           placeholderTextColor={colors.disabledText}
         />
         {showDelete && (
@@ -109,6 +114,6 @@ const styles = StyleSheet.create({
   deleteWrapper: {
     padding: 4,
     backgroundColor: '#eee',
-    borderRadius: 50
-  }
+    borderRadius: 50,
+  },
 });
