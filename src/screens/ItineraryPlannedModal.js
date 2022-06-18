@@ -16,6 +16,7 @@ import { colors, general, position } from '../core/theme';
 import {
   addCurrentItinerary,
   addItinerary,
+  removeItinerary,
   userSelector,
 } from '../redux/userSlice';
 
@@ -102,9 +103,11 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
   };
 
   const deleteItineraryById = (id) => {
-    setUserItineraries(
-      userItineraries.filter((itinerary) => itinerary.id !== id)
+    const itinerariesUpdated = userItineraries.filter(
+      (itinerary) => itinerary.id !== id
     );
+    setUserItineraries(itinerariesUpdated);
+    dispatch(removeItinerary(itinerariesUpdated));
   };
 
   const ModalCloseContainer = () => (

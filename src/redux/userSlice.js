@@ -43,11 +43,27 @@ const userSlice = createSlice({
         currentItinerary: action.payload,
       };
     },
+    removeItinerary: (state, action) => {
+      if (state.uid) {
+        updateUser({
+          ...state,
+          itineraries: action.payload,
+        });
+      }
+      return {
+        ...state,
+        itineraries: action.payload,
+      };
+    },
   },
 });
 
-export const { addUserInRedux, addItinerary, addCurrentItinerary } =
-  userSlice.actions;
+export const {
+  addUserInRedux,
+  addItinerary,
+  addCurrentItinerary,
+  removeItinerary,
+} = userSlice.actions;
 export const userSelector = (state) => state;
 
 export default userSlice.reducer;
