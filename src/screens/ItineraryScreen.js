@@ -16,7 +16,7 @@ export function ItineraryScreen({ navigation }) {
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
-      <OptionButton navigation={navigation} />
+      <OptionButton favorite print isOpen navigation={navigation} />
       <View style={style.container}>
         <MapView
           showsUserLocation={true}

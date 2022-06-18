@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import uuid from 'react-native-uuid';
+import { updateUser } from '../services/firebase';
 
 const initialCurrentItinerary = {
   id: uuid.v4(),
@@ -24,6 +25,12 @@ const userSlice = createSlice({
       if (alreadyPresent) {
         return state;
       } else {
+        if (state.uid) {
+          updateUser({
+            ...state,
+            itineraries: [...state.itineraries, action.payload],
+          });
+        }
         return {
           ...state,
           itineraries: [...state.itineraries, action.payload],

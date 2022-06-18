@@ -1,19 +1,39 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import uuid from 'react-native-uuid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { colors } from '../../core/theme';
-import { userSelector } from '../../redux/userSlice';
+import { addItinerary, userSelector } from '../../redux/userSlice';
 import { logout } from '../../services/firebase';
+import { TextInput } from '../Inputs';
 
-export function OptionButton({ navigation }) {
-  const [optionOpen, setOptionOpen] = useState(false);
+export function OptionButton({ navigation, favorite, print, isOpen }) {
+  //Redux
+  const dispatch = useDispatch();
   const user = useSelector(userSelector).user;
+
+  const [optionOpen, setOptionOpen] = useState(isOpen);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [name, setName] = useState('');
+
+  const onAddFavorite = () => {
+    dispatch(
+      addItinerary({
+        ...user.currentItinerary,
+        id: uuid.v4(),
+        date: new Date().toLocaleDateString('fr'),
+        type: 'favorite',
+        name: name,
+      })
+    );
+    setModalVisible(false);
+  };
 
   const renderOptions = () => {
     if (optionOpen) {
-      return user ? (
+      return user.uid ? (
         <>
           <Pressable
             onPress={() => navigation.navigate('SettingsScreen')}
@@ -21,15 +41,22 @@ export function OptionButton({ navigation }) {
           >
             <Ionicons name={'settings'} size={20} color={colors.darkGreen} />
           </Pressable>
-          <Pressable style={[style.buttonRounded, style.smallButton]}>
-            <Ionicons name={'share'} size={20} color={colors.darkGreen} />
-          </Pressable>
-          <Pressable style={[style.buttonRounded, style.smallButton]}>
-            <Ionicons name={'print'} size={20} color={colors.darkGreen} />
-          </Pressable>
-          <Pressable style={[style.buttonRounded, style.smallButton]}>
-            <Ionicons name={'star'} size={20} color={colors.darkGreen} />
-          </Pressable>
+          {print && (
+            <Pressable style={[style.buttonRounded, style.smallButton]}>
+              <Ionicons name={'print'} size={20} color={colors.darkGreen} />
+            </Pressable>
+          )}
+          {favorite && (
+            <Pressable style={[style.buttonRounded, style.smallButton]}>
+              <Ionicons
+                onPress={() => setModalVisible(true)}
+                name={'star'}
+                size={20}
+                color={colors.darkGreen}
+              />
+            </Pressable>
+          )}
+
           <Pressable
             onPress={() => logout(navigation)}
             style={[style.buttonRounded, style.smallButton]}
@@ -39,9 +66,11 @@ export function OptionButton({ navigation }) {
         </>
       ) : (
         <>
-          <Pressable style={[style.buttonRounded, style.smallButton]}>
-            <Ionicons name={'print'} size={20} color={colors.darkGreen} />
-          </Pressable>
+          {print && (
+            <Pressable style={[style.buttonRounded, style.smallButton]}>
+              <Ionicons name={'print'} size={20} color={colors.darkGreen} />
+            </Pressable>
+          )}
           <Pressable
             onPress={() => navigation.navigate('StartScreen')}
             style={[style.buttonRounded, style.smallButton]}
@@ -68,6 +97,27 @@ export function OptionButton({ navigation }) {
         />
       </Pressable>
       {renderOptions()}
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text>Entrer un nom pour votre favoris</Text>
+            <TextInput label='Nom' value={name} onChangeText={setName} />
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={onAddFavorite}
+            >
+              <Text style={styles.textStyle}>Ajouter</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -90,5 +140,49 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 100,
     borderColor: colors.grey,
+  },
+});
+
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
