@@ -5,7 +5,11 @@ import uuid from 'react-native-uuid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { colors } from '../../core/theme';
-import { addItinerary, userSelector } from '../../redux/userSlice';
+import {
+  addItinerary,
+  cleanUserOnLogout,
+  userSelector,
+} from '../../redux/userSlice';
 import { logout } from '../../services/firebase';
 import { TextInput } from '../Inputs';
 
@@ -29,6 +33,11 @@ export function OptionButton({ navigation, favorite, print, isOpen }) {
       })
     );
     setModalVisible(false);
+  };
+
+  const onLogoutPress = () => {
+    dispatch(cleanUserOnLogout());
+    logout(navigation);
   };
 
   const renderOptions = () => {
@@ -58,7 +67,7 @@ export function OptionButton({ navigation, favorite, print, isOpen }) {
           )}
 
           <Pressable
-            onPress={() => logout(navigation)}
+            onPress={onLogoutPress}
             style={[style.buttonRounded, style.smallButton]}
           >
             <Ionicons name={'log-out'} size={20} color={colors.darkGreen} />

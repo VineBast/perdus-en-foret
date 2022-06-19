@@ -55,6 +55,12 @@ const userSlice = createSlice({
         itineraries: action.payload,
       };
     },
+    cleanUserOnLogout: (state, action) => {
+      return {
+        currentItinerary: initialCurrentItinerary,
+        itineraries: [],
+      };
+    },
   },
 });
 
@@ -63,6 +69,7 @@ export const {
   addItinerary,
   addCurrentItinerary,
   removeItinerary,
+  cleanUserOnLogout,
 } = userSlice.actions;
 export const userSelector = (state) => state;
 
