@@ -25,8 +25,8 @@ export function ItineraryScreen({ navigation }) {
           initialRegion={{
             latitude: itinerary[0].latitude,
             longitude: itinerary[0].longitude,
-            latitudeDelta: 0.032,
-            longitudeDelta: 0.032,
+            latitudeDelta: 1.004757,
+            longitudeDelta: 1.006866,
           }}
         >
           {itinerary.map((coordinate, i) => (
