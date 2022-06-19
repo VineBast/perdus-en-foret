@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import uuid from 'react-native-uuid';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   AddPointButton,
   FilterModalSwitch,
@@ -13,37 +13,49 @@ import {
   TopIndicator,
 } from '../components';
 import { colors, general, position } from '../core/theme';
-import { userSelector } from '../redux/userSlice';
+import {
+  addCurrentItinerary,
+  addItinerary,
+  removeItinerary,
+  userSelector,
+} from '../redux/userSlice';
 
 export function ItineraryPlannedModal({ navigation, geoPoints }) {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [currentItinerary, setCurrentItinerary] = useState(null);
-  const [userItineraries, setUserItineraries] = useState([]);
-  const [isFavoriteSelected, setIsFavoriteSelected] = useState(false);
-
+  //Redux
+  const dispatch = useDispatch();
   const user = useSelector(userSelector).user;
 
+  const [modalVisible, setModalVisible] = useState();
+  const [currentItinerary, setCurrentItinerary] = useState();
+  const [userItineraries, setUserItineraries] = useState();
+  const [isFavoriteSelected, setIsFavoriteSelected] = useState(false);
+
   useEffect(() => {
-    setCurrentItinerary({
-      id: uuid.v4(),
-      name: '',
-      points: [
-        { id: uuid.v4(), lat: '', lng: '' },
-        { id: uuid.v4(), lat: '', lng: '' },
-      ],
-    });
+    setCurrentItinerary(user.currentItinerary);
     setUserItineraries(user.itineraries);
-  }, []);
+  }, [modalVisible]);
 
   const openItineraryScreen = () => {
     setModalVisible(false);
+    dispatch(addCurrentItinerary(currentItinerary));
+    dispatch(
+      addItinerary({
+        ...currentItinerary,
+        id: uuid.v4(),
+        date: new Date().toLocaleDateString('fr'),
+        type: 'recent',
+      })
+    );
     navigation.navigate('ItineraryScreen');
   };
 
   const addPoint = () => {
     setCurrentItinerary({
       ...currentItinerary,
-      points: [...currentItinerary.points, { id: uuid.v4(), lat: '', lng: '' }],
+      points: [
+        ...currentItinerary.points,
+        { id: uuid.v4(), latitude: '', longitude: '' },
+      ],
     });
   };
 
@@ -67,9 +79,15 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
     });
   };
 
-  const onChangeInput = ({ id, lat, lng }) => {
+  const onChangeInput = ({ id, latitude, longitude }) => {
     const modifiedPoints = currentItinerary.points.map((point) =>
-      point.id === id ? { ...point, lat: lat, lng: lng } : point
+      point.id === id
+        ? {
+            ...point,
+            latitude: Number(latitude),
+            longitude: Number(longitude),
+          }
+        : point
     );
 
     setCurrentItinerary({
@@ -85,9 +103,11 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
   };
 
   const deleteItineraryById = (id) => {
-    setUserItineraries(
-      userItineraries.filter((itinerary) => itinerary.id !== id)
+    const itinerariesUpdated = userItineraries.filter(
+      (itinerary) => itinerary.id !== id
     );
+    setUserItineraries(itinerariesUpdated);
+    dispatch(removeItinerary(itinerariesUpdated));
   };
 
   const ModalCloseContainer = () => (
@@ -127,8 +147,12 @@ export function ItineraryPlannedModal({ navigation, geoPoints }) {
                           isLast={isLast}
                           showDelete={points.length > 2}
                           handleDelete={(id) => deletePoint(id)}
-                          onChange={({ lat, lng }) =>
-                            onChangeInput({ id: point.id, lat: lat, lng: lng })
+                          onChange={({ latitude, longitude }) =>
+                            onChangeInput({
+                              id: point.id,
+                              latitude: latitude,
+                              longitude: longitude,
+                            })
                           }
                           style={{ marginBottom: isLast ? 0 : 10 }}
                         />

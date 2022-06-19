@@ -11,7 +11,6 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
-import uuid from 'react-native-uuid';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -45,32 +44,7 @@ const createUser = async (newUser, navigation) => {
         lastName: newUser.lastName,
         email: newUser.email,
         tel: newUser.tel,
-        itineraries: [
-          {
-            id: uuid.v4(),
-            type: 'recent',
-            points: [
-              { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-              { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-              { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-              { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-            ],
-            date: '12/06/2022',
-            name: 'Petit rocher',
-          },
-          {
-            id: uuid.v4(),
-            type: 'favorite',
-            points: [
-              { id: uuid.v4(), lat: '48.50679', lng: '2.05231' },
-              { id: uuid.v4(), lat: '47.50679', lng: '3.05231' },
-              { id: uuid.v4(), lat: '46.50679', lng: '4.05231' },
-              { id: uuid.v4(), lat: '45.50679', lng: '5.05231' },
-            ],
-            date: '12/06/2022',
-            name: 'Gros rocher',
-          },
-        ],
+        itineraries: [],
         uid: user.uid,
       });
     })
@@ -94,23 +68,13 @@ const getUser = async () => {
   } else return {};
 };
 
-// Exemple call updateUser() : 👇
-//   if (user) {
-//     async function test() {
-//       await updateUser({
-//         ...user,
-//         favoris: ['coucou', 'test'],
-//       });
-//     }
-//     test();
-//   }
 const updateUser = async (userUpdate) => {
   await setDoc(doc(db, 'users', userUpdate.uid), {
     firstName: userUpdate.firstName,
     lastName: userUpdate.lastName,
     email: userUpdate.email,
     tel: userUpdate.tel,
-    favoris: userUpdate.favoris,
+    itineraries: userUpdate.itineraries,
     uid: userUpdate.uid,
   });
 };
