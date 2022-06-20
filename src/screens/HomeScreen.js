@@ -12,9 +12,10 @@ import * as Location from 'expo-location';
 export function HomeScreen({ navigation }) {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [coordinates, setCoordinates] = useState();
   const user = useSelector(userSelector).user;
   const dataPRS = useState(data.features); //dataPRS.geometry.coordinates[1] = latitude , dataPRS.geometry.coordinates[0] = longitude
+  const [filteredDataPRS, setFilteredDataPRS] = useState(data.features);
+
 
   //Coordonnées par points du Nord-Ouest jusqu'au Sud-Ouest dans le sens des aiguilles d'une montre
   //dans le cas présent les points font un rectangle en forme de smartphone autour de l'Ile-de-France
@@ -41,9 +42,6 @@ export function HomeScreen({ navigation }) {
     },
   ]); */
 
-
-  const [filteredDataPRS, setFilteredDataPRS] = useState(data.features);
-
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -53,9 +51,7 @@ export function HomeScreen({ navigation }) {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      console.log(location);
       setLocation(location);
-      console.log(location);
       setFilteredDataPRS(filterDataPRS(location));
     })();
   }, []);
@@ -108,8 +104,8 @@ export function HomeScreen({ navigation }) {
                 latitude: marker.geometry.coordinates[1],
                 longitude: marker.geometry.coordinates[0],
               }}
-              title={'title'}
-              description={'description'}
+              title={marker.properties.llib_prs}
+              description={marker.properties.libs_prs}
               pinColor={colors.orange}
             />
           ))}
