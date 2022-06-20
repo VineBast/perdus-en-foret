@@ -45,14 +45,6 @@ export function HomeScreen({ navigation }) {
       coordinates[1].longitude
     )
   );
-  const [filteredDataPRS, setFilteredDataPRS] = useState(
-    filterDataPRS(
-      coordinates[0].latitude,
-      coordinates[2].latitude,
-      coordinates[0].longitude,
-      coordinates[1].longitude
-    )
-  );
 
   function filterDataPRS(
     latitudeNord,
