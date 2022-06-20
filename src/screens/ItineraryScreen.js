@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useSelector } from 'react-redux';
 import { BackButton, Background, OptionButton } from '../components';
@@ -12,19 +12,21 @@ import { GOOGLE_MAPS_APIKEY } from '../../.env.js';
 export function ItineraryScreen({ navigation }) {
   const user = useSelector(userSelector).user;
   const [itinerary, setItinerary] = useState(user.currentItinerary.points);
-  const map = useRef(null);
+  const googleMap = useRef(null);
 
   useEffect(() => {
-    //Addatpter le zoom pour afficher tous les markers sur l'écran. Ne marche que sur smartphone
-    // map.current.fitToCoordinates(itinerary, {
-    //   edgePadding: {
-    //     bottom: 200,
-    //     right: 50,
-    //     top: 150,
-    //     left: 50,
-    //   },
-    //   animated: true,
-    // });
+    function test() {
+      return googleMap.current.fitToCoordinates(itinerary, {
+        edgePadding: {
+          bottom: 200,
+          right: 50,
+          top: 150,
+          left: 50,
+        },
+        animated: true,
+      });
+    }
+    Platform.OS === 'ios' && test();
   }, []);
 
   return (
@@ -35,7 +37,7 @@ export function ItineraryScreen({ navigation }) {
         <MapView
           provider={PROVIDER_GOOGLE}
           focusable={true}
-          ref={map}
+          ref={googleMap}
           showsUserLocation={true}
           followUserLocation={true}
           style={style.map}
