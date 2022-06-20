@@ -44,7 +44,7 @@ const createUser = async (newUser, navigation) => {
         lastName: newUser.lastName,
         email: newUser.email,
         tel: newUser.tel,
-        favoris: [],
+        itineraries: [],
         uid: user.uid,
       });
     })
@@ -65,26 +65,16 @@ const getUser = async () => {
     });
 
     return data;
-  } else return undefined;
+  } else return {};
 };
 
-// Exemple call updateUser() : 👇
-//   if (user) {
-//     async function test() {
-//       await updateUser({
-//         ...user,
-//         favoris: ['coucou', 'test'],
-//       });
-//     }
-//     test();
-//   }
 const updateUser = async (userUpdate) => {
   await setDoc(doc(db, 'users', userUpdate.uid), {
     firstName: userUpdate.firstName,
     lastName: userUpdate.lastName,
     email: userUpdate.email,
     tel: userUpdate.tel,
-    favoris: userUpdate.favoris,
+    itineraries: userUpdate.itineraries,
     uid: userUpdate.uid,
   });
 };
