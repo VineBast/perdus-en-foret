@@ -56,12 +56,15 @@ export function ItineraryScreen({ navigation }) {
             />
           ))}
           <MapViewDirections
+            region='FR'
             origin={itinerary[0]}
             destination={itinerary[itinerary.length - 1]}
             waypoints={
               itinerary.length > 2 ? itinerary.slice(1, -1) : undefined
             }
             apikey={GOOGLE_MAPS_APIKEY}
+            precision='high'
+            mode='WALKING'
           />
         </MapView>
       </View>

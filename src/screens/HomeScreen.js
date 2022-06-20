@@ -2,14 +2,12 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useSelector } from 'react-redux';
-import { Background, OptionButton, Paragraph } from '.././components';
+import { Background, OptionButton } from '.././components';
 import { userSelector } from '../redux/userSlice';
 
-import MapViewDirections from 'react-native-maps-directions';
-import { GOOGLE_MAPS_APIKEY } from '../../.env.js';
+import * as data from '../../assets/PRS/PRS_FR.json';
 import { colors } from '../core/theme';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
-import * as data from '../../assets/PRS/PRS_FR.json';
 
 export function HomeScreen({ navigation }) {
   const user = useSelector(userSelector).user;
@@ -26,12 +24,12 @@ export function HomeScreen({ navigation }) {
     //Point 1 : Nord-Est
     {
       latitude: 49.334252,
-      longitude: 2.633750,
+      longitude: 2.63375,
     },
     //Point 2 : Sud-Est
     {
       latitude: 48.639048,
-      longitude: 2.633750,
+      longitude: 2.63375,
     },
     //Point 3 : Sud-Ouest
     {
@@ -39,10 +37,36 @@ export function HomeScreen({ navigation }) {
       longitude: 1.942471,
     },
   ]);
-  const [filteredDataPRS, setFilteredDataPRS] = useState(filterDataPRS(coordinates[0].latitude, coordinates[2].latitude, coordinates[0].longitude, coordinates[1].longitude));
+  const [filteredDataPRS, setFilteredDataPRS] = useState(() =>
+    filterDataPRS(
+      coordinates[0].latitude,
+      coordinates[2].latitude,
+      coordinates[0].longitude,
+      coordinates[1].longitude
+    )
+  );
+  const [filteredDataPRS, setFilteredDataPRS] = useState(
+    filterDataPRS(
+      coordinates[0].latitude,
+      coordinates[2].latitude,
+      coordinates[0].longitude,
+      coordinates[1].longitude
+    )
+  );
 
-  function filterDataPRS(latitudeNord, latitudeSud, longitudeOuest, longitudeEst) {
-    return dataPRS[0].filter(elm => (elm.geometry.coordinates[0] < longitudeEst && elm.geometry.coordinates[0] > longitudeOuest && elm.geometry.coordinates[1] < latitudeNord && elm.geometry.coordinates[1] > latitudeSud));
+  function filterDataPRS(
+    latitudeNord,
+    latitudeSud,
+    longitudeOuest,
+    longitudeEst
+  ) {
+    return dataPRS[0].filter(
+      (elm) =>
+        elm.geometry.coordinates[0] < longitudeEst &&
+        elm.geometry.coordinates[0] > longitudeOuest &&
+        elm.geometry.coordinates[1] < latitudeNord &&
+        elm.geometry.coordinates[1] > latitudeSud
+    );
   }
 
   return (
@@ -63,18 +87,15 @@ export function HomeScreen({ navigation }) {
           {filteredDataPRS.map((marker, i) => (
             <MapView.Marker
               key={i}
-              coordinate={{ latitude: marker.geometry.coordinates[1], longitude: marker.geometry.coordinates[0] }}
+              coordinate={{
+                latitude: marker.geometry.coordinates[1],
+                longitude: marker.geometry.coordinates[0],
+              }}
               title={'title'}
               description={'description'}
               pinColor={colors.orange}
             />
           ))}
-          <MapViewDirections
-            origin={coordinates[0]}
-            destination={coordinates[3]}
-            apikey={GOOGLE_MAPS_APIKEY}
-            waypoints={[coordinates[1], coordinates[2]]}
-          />
         </MapView>
       </View>
       <ItineraryPlannedModal navigation={navigation} />
