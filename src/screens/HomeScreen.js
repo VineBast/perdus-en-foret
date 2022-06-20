@@ -39,7 +39,7 @@ export function HomeScreen({ navigation }) {
       longitude: 1.942471,
     },
   ]);
-  const [filteredDataPRS, setFilteredDataPRS] = useState(() => filterDataPRS(coordinates[0].latitude, coordinates[2].latitude, coordinates[0].longitude, coordinates[1].longitude));
+  const [filteredDataPRS, setFilteredDataPRS] = useState(filterDataPRS(coordinates[0].latitude, coordinates[2].latitude, coordinates[0].longitude, coordinates[1].longitude));
 
   function filterDataPRS(latitudeNord, latitudeSud, longitudeOuest, longitudeEst) {
     return dataPRS[0].filter(elm => (elm.geometry.coordinates[0] < longitudeEst && elm.geometry.coordinates[0] > longitudeOuest && elm.geometry.coordinates[1] < latitudeNord && elm.geometry.coordinates[1] > latitudeSud));
@@ -48,12 +48,6 @@ export function HomeScreen({ navigation }) {
   return (
     <Background>
       <OptionButton navigation={navigation} />
-      {user && (
-        <>
-          <Paragraph>{`Bonjour ${user?.lastName} vous êtes bien connecté.`}</Paragraph>
-          <Paragraph>{user?.lastName}</Paragraph>
-        </>
-      )}
       <View style={style.container}>
         <MapView
           showsUserLocation={true}
