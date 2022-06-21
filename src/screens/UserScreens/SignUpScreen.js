@@ -7,7 +7,7 @@ import {
   Title,
   SubmitButton
 } from '../../components';
-import { theme, colors } from '../../core/theme';
+import { colors } from '../../core/theme';
 import { createUser } from '../../services/firebase';
 
 export function SignUpScreen({ navigation }) {
@@ -16,7 +16,7 @@ export function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setlastName] = useState('');
   const [tel, setTel] = useState('');
-
+  
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
@@ -69,7 +69,8 @@ export function SignUpScreen({ navigation }) {
             email: email,
             password: password,
           },
-          navigation
+          navigation,
+
         )} 
         />
         <View style={styles.row}>
