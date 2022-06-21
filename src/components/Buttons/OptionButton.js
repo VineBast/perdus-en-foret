@@ -27,7 +27,7 @@ export function OptionButton({ navigation, favorite, print, isOpen }) {
       addItinerary({
         ...user.currentItinerary,
         id: uuid.v4(),
-        date: new Date().toLocaleDateString('fr'),
+        date: new Date().toString(),
         type: 'favorite',
         name: name,
       })

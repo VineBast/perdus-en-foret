@@ -15,6 +15,7 @@ export function LatLngInput({
 }) {
   const [latInput, setLatInput] = useState(point.latitude.toString());
   const [lngInput, setLngInput] = useState(point.longitude.toString());
+
   useEffect(() => {
     onChange({ latitude: latInput, longitude: lngInput });
   }, [latInput, lngInput]);
