@@ -66,6 +66,7 @@ function mapAuthCodeToMessage(authCode) {
     case "auth/wrong-password":
       alert("Mot de passe incorrect. Veuillez réessayer.")
       break;
+    default:
     case "auth/email-already-in-use":
       alert("L'adresse mail est déja utilisée.")
       break;

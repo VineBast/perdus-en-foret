@@ -22,6 +22,28 @@ const userSlice = createSlice({
         .map((elm) => elm.id)
         .includes(action.payload.id);
 
+      let countRecent = state.itineraries
+        .filter(ele => ele.type === 'recent').length
+
+      if(countRecent >= 10) {
+        const array = [...state.itineraries]
+        //.sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(1, state.itineraries.length)
+        console.log(array)
+        //Firebase update
+        if (state.uid) {
+          updateUser({
+            ...state,
+            itineraries: [...array, action.payload],
+          });
+        }
+        //Redux update
+        return {
+          ...state,
+          itineraries: [...array, action.payload],
+        };
+      } 
+
       if (alreadyPresent) {
         return state;
       } else {
