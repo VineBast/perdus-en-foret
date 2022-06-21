@@ -47,9 +47,30 @@ const createUser = async (newUser, navigation) => {
         itineraries: [],
         uid: user.uid,
       });
+      
     })
-    .catch((error) => alert(error.message));
+    .catch(error => {  
+      console.log(error.code) 
+      mapAuthCodeToMessage(error.code)
+   })
 };
+
+function mapAuthCodeToMessage(authCode) {
+  switch (authCode) {
+    case "auth/invalid-email":
+      alert("Email invalide. Veuillez réessayer. Example:'xxx@xxx.com'")
+      break;
+    case "auth/weak-password":
+      alert("Le mot de passe doit comporter au moins 6 caractères. ")
+      break;
+    case "auth/wrong-password":
+      alert("Mot de passe incorrect. Veuillez réessayer.")
+      break;
+    case "auth/email-already-in-use":
+      alert("L'adresse mail est déja utilisée.")
+      break;
+  }
+}
 
 const getUser = async () => {
   if (auth.currentUser !== null) {
@@ -91,14 +112,13 @@ const logout = (navigation) => {
 const userLogin = (email, password) => {
   auth
     .signInWithEmailAndPassword(email, password)
-    .catch((error) => alert(error.message));
-};
+    .catch(error => {  
+      console.log(error.code) 
+      mapAuthCodeToMessage(error.code)
+   })
+}
 
 const resetPasswordEmail = (navigation) => {
-  const emailError = emailValidator(email.value);
-  if (emailError) {
-    setEmail({ ...email, error: emailError });
-  }
   navigation.navigate('StartScreen');
 };
 
@@ -110,4 +130,6 @@ export {
   logout,
   resetPasswordEmail,
   updateUser,
+  mapAuthCodeToMessage,
+  
 };
