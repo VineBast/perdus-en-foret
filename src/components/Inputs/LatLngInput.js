@@ -13,12 +13,18 @@ export function LatLngInput({
   handleDelete,
   onChange,
 }) {
-  const [latInput, setLatInput] = useState(point.latitude.toString());
-  const [lngInput, setLngInput] = useState(point.longitude.toString());
+  const [latInput, setLatInput] = useState('');
+  const [lngInput, setLngInput] = useState('');
 
   useEffect(() => {
     onChange({ latitude: latInput, longitude: lngInput });
+    console.log({ latitude: latInput, longitude: lngInput });
   }, [latInput, lngInput]);
+
+  useEffect(() => {
+    setLngInput(point.longitude.toString());
+    setLatInput(point.latitude.toString());
+  }, [point]);
 
   return (
     <View style={styles.container}>

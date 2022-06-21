@@ -39,10 +39,6 @@ export function ItineraryPlannedModal({ navigation }) {
     setUserItineraries(user.itineraries);
   }, [modalVisible]);
 
-  useEffect(() => {
-    console.log(currentItinerary);
-  }, [currentItinerary]);
-
   const openItineraryScreen = () => {
     setModalVisible(false);
     dispatch(addCurrentItinerary(currentItinerary));
@@ -112,7 +108,7 @@ export function ItineraryPlannedModal({ navigation }) {
   const setSpecificItinerary = (id) => {
     setCurrentItinerary({
       ...currentItinerary,
-      points: userItineraries.find(itinerary => itinerary.id === id).points
+      points: userItineraries.find(itinerary => itinerary.id === id).points,
     });
   };
 
@@ -177,25 +173,25 @@ export function ItineraryPlannedModal({ navigation }) {
               <View style={[position.rowCenter, { marginTop: 14 }]}>
                 <View style={{ flex: 1 }}>
                   {currentItinerary?.points.map((point, i, points) => {
-                      const isLast = i === points.length - 1;
-                      return (
-                        <LatLngInput
-                          key={point.id}
-                          point={point}
-                          isLast={isLast}
-                          showDelete={points.length > 2}
-                          handleDelete={(id) => deletePoint(id)}
-                          onChange={({ latitude, longitude }) =>
-                            onChangeInput({
-                              id: point.id,
-                              latitude: latitude,
-                              longitude: longitude,
-                            })
-                          }
-                          style={{ marginBottom: isLast ? 0 : 10 }}
-                        />
-                      );
-                    })}
+                    const isLast = i === points.length - 1;
+                    return (
+                      <LatLngInput
+                        key={point.id}
+                        point={point}
+                        isLast={isLast}
+                        showDelete={points.length > 2}
+                        handleDelete={(id) => deletePoint(id)}
+                        onChange={({ latitude, longitude }) =>
+                          onChangeInput({
+                            id: point.id,
+                            latitude: latitude,
+                            longitude: longitude,
+                          })
+                        }
+                        style={{ marginBottom: isLast ? 0 : 10 }}
+                      />
+                    );
+                  })}
                 </View>
                 <SwitchArrowIcon color='#fff' onPress={reverseGeoPoints} />
               </View>
@@ -228,7 +224,7 @@ export function ItineraryPlannedModal({ navigation }) {
       <View style={style.premodalContainer}>
         <View style={style.actionsWrapper}>
           {actions.map((action, i, arr) => (
-            <Pressable key={i} onPress={action.onPress} style={[position.rowSpace, style.action, { borderBottomWidth: i !== arr.length - 1 ? 1 : 0,  }]}>
+            <Pressable key={i} onPress={action.onPress} style={[position.rowSpace, style.action, { borderBottomWidth: i !== arr.length - 1 ? 1 : 0, }]}>
               <View style={{ padding: 8, borderRadius: 100, backgroundColor: action.iconColor }}>
                 {action.icon}
               </View>
