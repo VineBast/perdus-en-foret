@@ -1,7 +1,8 @@
 import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
-import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import { BackButton, Background, OptionButton } from '../components';
@@ -117,7 +118,7 @@ export function ItineraryScreen({ navigation }) {
       <View style={[style.flash, { display: isFlash ? 'flex' : 'none' }]} />
       <View style={style.container}>
         <MapView
-          // provider={PROVIDER_GOOGLE}
+          provider={PROVIDER_GOOGLE}
           focusable={true}
           ref={googleMap}
           showsUserLocation={true}
