@@ -62,6 +62,8 @@ export function HomeScreen({ navigation }) {
               focusable={true}
               showsUserLocation={true}
               followUserLocation={true}
+              showsMyLocationButton	={false}
+              showsCompass={false}
               style={style.map}
               onRegionChangeComplete={(status) => setFilteredDataPRS(filterDataPRS({ 'coords' : { latitude: status.latitude, longitude: status.longitude } }))}
               initialRegion={{
