@@ -33,15 +33,45 @@ export function ItineraryPlannedModal({ navigation }) {
   const [currentItinerary, setCurrentItinerary] = useState();
   const [userItineraries, setUserItineraries] = useState();
   const [isFavoriteSelected, setIsFavoriteSelected] = useState(false);
+  const [isValidSubmit, setIsValidSubmit] = useState(false);
 
   useEffect(() => {
     setCurrentItinerary(user.currentItinerary);
     setUserItineraries(user.itineraries);
   }, [modalVisible]);
 
+  const computeIsValidInput = (points) => {
+    const isValidInput = input => (input && input !== '' && typeof Number(input) === 'number' && !isNaN(Number(input)));
+    const isValidLatidude = lat => lat >= -90 && lat <= 90;
+    const isValidLongitude = lng => lng >= -180 && lng <= 180;
+
+    return points.every(
+      point => (
+        isValidInput(point.latitude) &&
+        isValidLatidude(point.latitude) &&
+        isValidInput(point.longitude) &&
+        isValidLongitude(point.longitude)
+      )
+    );
+  };
+
+  useEffect(() => {
+    if (currentItinerary) {
+      setIsValidSubmit(computeIsValidInput(currentItinerary.points));
+    }
+  }, [currentItinerary?.points]);
+
   const openItineraryScreen = () => {
     setModalVisible(false);
-    dispatch(addCurrentItinerary(currentItinerary));
+    dispatch(addCurrentItinerary({
+      ...currentItinerary,
+      points: currentItinerary.points.map(point => ({
+        ...point,
+        latitude: Number(point.latitude),
+        longitude: Number(point.longitude)
+      }))
+    }));
+
     const itineraryInList = isItineraryExist(currentItinerary, user.itineraries);
     if (itineraryInList === undefined) {
       dispatch(
@@ -50,6 +80,11 @@ export function ItineraryPlannedModal({ navigation }) {
           id: uuid.v4(),
           date: new Date().toString(),
           type: 'recent',
+          points: currentItinerary.points.map(point => ({
+            ...point,
+            latitude: Number(point.latitude),
+            longitude: Number(point.longitude)
+          }))
         })
       );
     } else {
@@ -89,12 +124,12 @@ export function ItineraryPlannedModal({ navigation }) {
   };
 
   const onChangeInput = ({ id, latitude, longitude }) => {
-    const modifiedPoints = currentItinerary.points.map((point) =>
+    const modifiedPoints = currentItinerary.points.map(point =>
       point.id === id
         ? {
           ...point,
-          latitude: Number(latitude),
-          longitude: Number(longitude),
+          latitude: latitude,
+          longitude: longitude,
         }
         : point
     );
@@ -121,9 +156,13 @@ export function ItineraryPlannedModal({ navigation }) {
   };
 
   const setLastItinerary = () => {
-    const lastItinerary = getSortByDate(user.itineraries, false)[0];
-    setCurrentItinerary(lastItinerary);
-    openItineraryScreen();
+    if (user.itineraries.length === 0) {
+      setModalVisible(true);
+    } else {
+      const lastItinerary = getSortByDate(user.itineraries, false)[0];
+      setCurrentItinerary(lastItinerary);
+      openItineraryScreen();
+    }
   };
 
   const actions = [
@@ -166,13 +205,14 @@ export function ItineraryPlannedModal({ navigation }) {
               <View style={[position.columnCenter, { paddingHorizontal: 27 }]}>
                 <SubmitButton
                   label="Voir l'itinéraire"
+                  disabled={!isValidSubmit}
                   onPress={openItineraryScreen}
                   style={{ marginVertical: 0 }}
                 />
               </View>
               <View style={[position.rowCenter, { marginTop: 14 }]}>
                 <View style={{ flex: 1 }}>
-                  {currentItinerary?.points.map((point, i, points) => {
+                  {currentItinerary && [...currentItinerary.points].map((point, i, points) => {
                     const isLast = i === points.length - 1;
                     return (
                       <LatLngInput
@@ -181,7 +221,7 @@ export function ItineraryPlannedModal({ navigation }) {
                         isLast={isLast}
                         showDelete={points.length > 2}
                         handleDelete={(id) => deletePoint(id)}
-                        onChange={({ latitude, longitude }) =>
+                        onChange={({ latitude = point.latitude, longitude = point.longitude }) =>
                           onChangeInput({
                             id: point.id,
                             latitude: latitude,

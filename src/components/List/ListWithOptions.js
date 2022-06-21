@@ -52,6 +52,7 @@ export function ListWithOptions({
                 <Text style={{ fontSize: 13, color: '#fff' }} numberOfLines={1}>
                   {itinerary.points[0].latitude},{' '}
                   {itinerary.points[0].longitude} →{' '}
+                  {itinerary.points.length > 2 && '. . .  → '}
                   {itinerary.points[itinerary.points.length - 1].latitude},{' '}
                   {itinerary.points[itinerary.points.length - 1].longitude}
                 </Text>

@@ -5,7 +5,7 @@ const isItineraryExist = (currentItinerary, itineraries) => {
         point => (
           { lat: point.latitude, lng: point.longitude }
         )
-      )) === JSON.stringify(currentItinerary.points.map(
+      )) == JSON.stringify(currentItinerary.points.map(
         point => (
           { lat: point.latitude, lng: point.longitude }
         )
