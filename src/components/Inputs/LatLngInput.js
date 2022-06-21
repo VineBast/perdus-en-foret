@@ -16,14 +16,26 @@ export function LatLngInput({
   const [latInput, setLatInput] = useState('');
   const [lngInput, setLngInput] = useState('');
 
-  useEffect(() => {
-    onChange({ latitude: latInput, longitude: lngInput });
-    console.log({ latitude: latInput, longitude: lngInput });
-  }, [latInput, lngInput]);
+  const filterToNumber = (string) => {
+    string = string.replace(/,/g, '.');
+    return string.replace(/[^0-9.]/g, '');
+  };
+
+  const changeLatInput = (latitude) => {
+    const filteredLatitude = filterToNumber(latitude);
+    setLatInput(filteredLatitude);
+    onChange({ latitude: filteredLatitude });
+  };
+
+  const changeLngInput = (longitude) => {
+    const filteredLongitude = filterToNumber(longitude);
+    setLngInput(filteredLongitude);
+    onChange({ longitude: filteredLongitude });
+  };
 
   useEffect(() => {
-    setLngInput(point.longitude.toString());
-    setLatInput(point.latitude.toString());
+    setLngInput(point.longitude);
+    setLatInput(point.latitude);
   }, [point]);
 
   return (
@@ -35,7 +47,7 @@ export function LatLngInput({
               <CircleIcon color='#fff' />
             </View>
             <View style={[position.columnCenter, { marginTop: 6 }]}>
-              {[...Array(3)].map((_ele, i) => (
+              {[...Array(3)].map((_, i) => (
                 <Svg
                   key={i}
                   style={{ marginBottom: 5 }}
@@ -56,7 +68,7 @@ export function LatLngInput({
       <View style={[styles.inputWrapper, { ...style }]}>
         <TextInput
           style={styles.input}
-          onChangeText={setLatInput}
+          onChangeText={(value) => changeLatInput(value)}
           value={latInput}
           placeholder='latitude...'
           placeholderTextColor={colors.disabledText}
@@ -64,7 +76,7 @@ export function LatLngInput({
         <View style={styles.separator} />
         <TextInput
           style={styles.input}
-          onChangeText={setLngInput}
+          onChangeText={(value) => changeLngInput(value)}
           value={lngInput}
           placeholder='longitude...'
           placeholderTextColor={colors.disabledText}

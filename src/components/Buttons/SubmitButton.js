@@ -7,6 +7,7 @@ export function SubmitButton({
   label = 'Test du label',
   style,
   orange,
+  disabled = false,
   ...props
 }) {
   return (
@@ -14,9 +15,18 @@ export function SubmitButton({
       {...props}
       style={[
         styles.button,
-        { backgroundColor: orange ? colors.orange : colors.green },
-        style,
+        { backgroundColor: disabled ? colors.grey : '' },
+        {
+          backgroundColor:
+            disabled
+              ? colors.grey2
+              : orange
+                ? colors.orange
+                : colors.green
+        },
+        style
       ]}
+      disabled={disabled}
     >
       <Text style={styles.text}>{label}</Text>
     </Pressable>
