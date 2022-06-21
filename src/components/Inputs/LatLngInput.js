@@ -34,8 +34,8 @@ export function LatLngInput({
   };
 
   useEffect(() => {
-    setLngInput(point.longitude);
-    setLatInput(point.latitude);
+    setLngInput(point.longitude.toString());
+    setLatInput(point.latitude.toString());
   }, [point]);
 
   return (
