@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors, font, position } from '../../core/theme';
+import { getSortByDate } from '../../helpers/sort';
 import { MarkerIcon } from '../Icons';
 
 export function ListWithOptions({
@@ -19,7 +20,7 @@ export function ListWithOptions({
   return (
     <View style={[style, styles.listContainer]}>
       {filteredItineraries.length > 0 ? (
-        filteredItineraries.map((itinerary, index, array) => {
+        getSortByDate(filteredItineraries, false).map((itinerary, index, array) => {
           const isLast = index === array.length - 1;
 
           return (
@@ -46,7 +47,7 @@ export function ListWithOptions({
                 <Text style={font.desc} numberOfLines={1}>
                   {isFavoriteSelected
                     ? itinerary.name || 'Favori'
-                    : `Le ${itinerary.date}`}
+                    : `Le ${new Date(itinerary.date).toLocaleDateString('fr')}`}
                 </Text>
                 <Text style={{ fontSize: 13, color: '#fff' }} numberOfLines={1}>
                   {itinerary.points[0].latitude},{' '}
@@ -63,8 +64,7 @@ export function ListWithOptions({
               </TouchableOpacity>
             </TouchableOpacity>
           );
-        })
-      ) : (
+        })) : (
         <View style={[styles.emptyTextWrapper, position.rowCenter]}>
           <Text style={styles.emptyText}>
             Pas encore d'itinéraire {isFavoriteSelected ? 'favori' : 'récent'}

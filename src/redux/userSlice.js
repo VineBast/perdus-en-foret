@@ -12,7 +12,10 @@ const initialCurrentItinerary = {
 };
 const userSlice = createSlice({
   name: 'user',
-  initialState: { currentItinerary: initialCurrentItinerary, itineraries: [] },
+  initialState: {
+    currentItinerary: initialCurrentItinerary,
+    itineraries: []
+  },
   reducers: {
     addUserInRedux: (state, action) => {
       return { ...action.payload, currentItinerary: initialCurrentItinerary };
@@ -77,6 +80,16 @@ const userSlice = createSlice({
         itineraries: action.payload,
       };
     },
+    updateDateItinerary: (state, action) => {
+      return {
+        ...state,
+        itineraries: state.itineraries.map(
+          itinerary => itinerary.id === action.payload.id
+            ? { ...itinerary, date: new Date().toString() }
+            : itinerary
+        )
+      }
+    },
     cleanUserOnLogout: (state, action) => {
       return {
         currentItinerary: initialCurrentItinerary,
@@ -91,6 +104,7 @@ export const {
   addItinerary,
   addCurrentItinerary,
   removeItinerary,
+  updateDateItinerary,
   cleanUserOnLogout,
 } = userSlice.actions;
 export const userSelector = (state) => state;
