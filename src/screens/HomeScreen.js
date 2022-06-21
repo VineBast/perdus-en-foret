@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plateform, StyleSheet, View } from 'react-native';
-import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import { Text, StyleSheet, View } from 'react-native';
+import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useSelector } from 'react-redux';
 import { Background, OptionButton } from '.././components';
 import { userSelector } from '../redux/userSlice';
@@ -11,9 +11,7 @@ import * as Location from 'expo-location';
 
 export function HomeScreen({ navigation }) {
   const [location, setLocation] = useState(null);
-  const [regionChanged, setRegionChanged] = useState();
   const [errorMsg, setErrorMsg] = useState(null);
-  const user = useSelector(userSelector).user;
   const dataPRS = data.features; //dataPRS.geometry.coordinates[1] = latitude , dataPRS.geometry.coordinates[0] = longitude
   const [filteredDataPRS, setFilteredDataPRS] = useState(data.features);
 
@@ -32,13 +30,10 @@ export function HomeScreen({ navigation }) {
   let text = 'Waiting..';
   if (errorMsg) {
     text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
   }
   console.log(text);
 
   function filterDataPRS(location) {
-    console.log(location);
     let latitudeNord = location.coords.latitude + 0.2;
     let latitudeSud = location.coords.latitude - 0.2;
     let longitudeOuest = location.coords.longitude - 0.2;
@@ -62,17 +57,17 @@ export function HomeScreen({ navigation }) {
               focusable={true}
               showsUserLocation={true}
               followUserLocation={true}
-              showsMyLocationButton	={false}
+              showsMyLocationButton={false}
               showsCompass={false}
               style={style.map}
-              onRegionChangeComplete={(status) => setFilteredDataPRS(filterDataPRS({ 'coords' : { latitude: status.latitude, longitude: status.longitude } }))}
+              onRegionChangeComplete={(status) => setFilteredDataPRS(filterDataPRS({ 'coords': { latitude: status.latitude, longitude: status.longitude } }))}
               initialRegion={{
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
                 latitudeDelta: 0.504757,
                 longitudeDelta: 0.506866,
               }}
-            >              
+            >
               {filteredDataPRS.map((marker, i) => (
                 <MapView.Marker
                   key={i}
@@ -81,9 +76,18 @@ export function HomeScreen({ navigation }) {
                     longitude: marker.geometry.coordinates[0],
                   }}
                   title={marker.properties.llib_prs}
-                  description={marker.properties.libs_prs}
-                  pinColor={colors.orange}
-                />
+                  description={marker.properties.lobs_prs}
+                  pinColor={colors.orange}>
+                  <Callout>
+                    <View>
+                      <Text>{marker.properties.llib_prs}</Text>
+                      <Text>{marker.properties.lobs_prs}</Text>
+                      <Text>Latitude : {marker.geometry.coordinates[1]}</Text>
+                      <Text>Longitude : {marker.geometry.coordinates[0]}</Text>
+                    </View>
+                  </Callout>
+
+                </MapView.Marker>
               ))}
             </MapView>
           )
@@ -102,5 +106,39 @@ const style = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  containerCallout: {
+    flexDirection: 'column',
+    alignSelf: 'flex-start',
+  },
+  bubble: {
+    width: 140,
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    backgroundColor: '#4da2ab',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 6,
+    borderColor: '#007a87',
+    borderWidth: 0.5,
+  },
+  amount: {
+    flex: 1,
+  },
+  arrow: {
+    backgroundColor: 'transparent',
+    borderWidth: 16,
+    borderColor: 'transparent',
+    borderTopColor: '#4da2ab',
+    alignSelf: 'center',
+    marginTop: -32,
+  },
+  arrowBorder: {
+    backgroundColor: 'transparent',
+    borderWidth: 16,
+    borderColor: 'transparent',
+    borderTopColor: '#007a87',
+    alignSelf: 'center',
+    marginTop: -0.5,
   },
 });
