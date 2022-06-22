@@ -14,16 +14,18 @@ export function ProfileButton({
   return (
     <TouchableOpacity
       {...props}
-      onPress={() => navigation.navigate('UpdateScreen')}
+      onPress={() => ('')}
       activeOpacity={0.8}
       style={[
         styles.pressable,
         style,
       ]}
-    ><Image
+    >
+      <Image
       style={{ width: 60, height: 60, borderRadius: 60 }}
       source={{ uri: "https://docs.ypariset.fr/img/default-avatar.jpeg" }}
-    /><View>
+      />
+    <View>
         <Text style={[styles.textName,  {fontWeight: 'bold'}]}>{name}</Text>
         <Text style={styles.text}>{mail}</Text>
         <Text style={styles.text}>{tel}</Text>
