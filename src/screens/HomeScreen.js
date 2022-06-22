@@ -1,20 +1,22 @@
-import { useState, useEffect, useRef } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import * as Location from 'expo-location';
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { useSelector } from 'react-redux';
-import { Background, OptionButton } from '.././components';
-import { userSelector } from '../redux/userSlice';
 import * as data from '../../assets/PRS/PRS_FR.json';
+import { Background, OptionButton } from '.././components';
 import { colors } from '../core/theme';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
-import * as Location from 'expo-location';
 
 export function HomeScreen({ navigation }) {
-  const [location, setLocation] = useState({ coords: { latitude: 48.860708, longitude: 2.337322 } });
+  const [location, setLocation] = useState({
+    coords: { latitude: 49.860708, longitude: 2.337322 },
+  });
   const [errorMsg, setErrorMsg] = useState(null);
   const googleMap = useRef(null);
   const dataPRS = data.features; //dataPRS.geometry.coordinates[1] = latitude , dataPRS.geometry.coordinates[0] = longitude
-  const [filteredDataPRS, setFilteredDataPRS] = useState(filterDataPRS(location));
+  const [filteredDataPRS, setFilteredDataPRS] = useState(
+    filterDataPRS(location)
+  );
 
   useEffect(() => {
     (async () => {
@@ -27,26 +29,17 @@ export function HomeScreen({ navigation }) {
       setFilteredDataPRS(filterDataPRS(location));
       changeRegion(location);
       setLocation(location);
-      console.log("Location :");
-      console.log(location);
     })();
   }, []);
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  }
-  console.log(text);
 
   const changeRegion = (location) => {
-    console.log(location);
     googleMap.current.animateToRegion({
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
       latitudeDelta: 0.504757,
       longitudeDelta: 0.506866,
-    })
-    console.log('change region');
-  }
+    });
+  };
 
   function filterDataPRS(location) {
     let latitudeNord = location.coords.latitude + 0.2;
@@ -75,7 +68,16 @@ export function HomeScreen({ navigation }) {
             showsCompass={false}
             ref={googleMap}
             style={style.map}
-            onRegionChangeComplete={(status) => setFilteredDataPRS(filterDataPRS({ 'coords': { latitude: status.latitude, longitude: status.longitude } }))}
+            onRegionChangeComplete={(status) =>
+              setFilteredDataPRS(
+                filterDataPRS({
+                  coords: {
+                    latitude: status.latitude,
+                    longitude: status.longitude,
+                  },
+                })
+              )
+            }
             initialRegion={{
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
@@ -92,7 +94,8 @@ export function HomeScreen({ navigation }) {
                 }}
                 title={marker.properties.llib_prs}
                 description={marker.properties.lobs_prs}
-                pinColor={colors.orange}>
+                pinColor={colors.orange}
+              >
                 <Callout>
                   <View>
                     <Text>{marker.properties.llib_prs}</Text>
