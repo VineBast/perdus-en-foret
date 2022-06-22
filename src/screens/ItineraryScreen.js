@@ -1,7 +1,7 @@
 import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
@@ -86,7 +86,7 @@ export function ItineraryScreen({ navigation }) {
     }
   }
 
-  async function takeSnapshot() {
+  async function takeSnapshot(isNext) {
     const status = await MediaLibrary.getPermissionsAsync();
     if (status.granted) {
       const snapshot = googleMap.current.takeSnapshot({
@@ -96,12 +96,13 @@ export function ItineraryScreen({ navigation }) {
       });
       snapshot.then((uri) => {
         MediaLibrary.createAssetAsync(uri);
+        isNext && onNextArrowPress();
       });
     }
   }
 
-  async function takeOneSnapshot() {
-    await takeSnapshot();
+  async function takeOneSnapshot(isNext) {
+    await takeSnapshot(isNext);
     setIsFlash(true);
     setTimeout(() => setIsFlash(false), 30);
   }
@@ -118,7 +119,7 @@ export function ItineraryScreen({ navigation }) {
       <View style={[style.flash, { display: isFlash ? 'flex' : 'none' }]} />
       <View style={style.container}>
         <MapView
-          provider={PROVIDER_GOOGLE}
+          // provider={PROVIDER_GOOGLE}
           focusable={true}
           ref={googleMap}
           showsUserLocation={true}
@@ -141,17 +142,21 @@ export function ItineraryScreen({ navigation }) {
               pinColor={colors.orange}
             />
           ))}
-          <MapViewDirections
-            region='FR'
-            origin={itinerary[0]}
-            destination={itinerary[itinerary.length - 1]}
-            waypoints={
-              itinerary.length > 2 ? itinerary.slice(1, -1) : undefined
-            }
-            apikey={GOOGLE_MAPS_APIKEY}
-            precision='high'
-            mode='WALKING'
-          />
+          {isNative ? (
+            <MapViewDirections
+              region='FR'
+              origin={itinerary[0]}
+              destination={itinerary[itinerary.length - 1]}
+              waypoints={
+                itinerary.length > 2 ? itinerary.slice(1, -1) : undefined
+              }
+              apikey={GOOGLE_MAPS_APIKEY}
+              precision='high'
+              mode='WALKING'
+            />
+          ) : (
+            <MapView.Polyline coordinates={itinerary} />
+          )}
         </MapView>
       </View>
       {isNative && (
@@ -168,7 +173,7 @@ export function ItineraryScreen({ navigation }) {
               </Pressable>
               <Pressable>
                 <Ionicons
-                  onPress={takeOneSnapshot}
+                  onPress={() => takeOneSnapshot(true)}
                   name={'camera'}
                   size={30}
                   color={colors.white}
