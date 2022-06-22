@@ -27,6 +27,8 @@ export function HomeScreen({ navigation }) {
   });
   const [inputIdex, setInputIdex] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [closelestPRS, setCloselestPRS] = useState(findClosestPRS());
+  const [isCloselestPRS, setIsCloselestPRS] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -41,7 +43,7 @@ export function HomeScreen({ navigation }) {
       setLocation(tempLocation);
       setUserLocation(tempLocation);
     })();
-  }, []);
+  }, [Location]);
 
   const changeRegion = (location) => {
     googleMap.current.animateToRegion({
@@ -83,7 +85,7 @@ export function HomeScreen({ navigation }) {
         index = i;
       }
     });
-    setFilteredDataPRS([dataPRS[index]]);
+    return dataPRS[index];
   }
 
   function filterDataPRS(location) {
@@ -127,7 +129,10 @@ export function HomeScreen({ navigation }) {
   return (
     <Background>
       {!user.uid && <BackButton goBack={navigation.goBack} />}
-      <OptionButton pin={findClosestPRS} navigation={navigation} />
+      <OptionButton
+        pin={() => setIsCloselestPRS(!isCloselestPRS)}
+        navigation={navigation}
+      />
       <View style={style.container}>
         {
           <MapView
@@ -156,31 +161,41 @@ export function HomeScreen({ navigation }) {
               longitudeDelta: 0.506866,
             }}
           >
-            {filteredDataPRS.map((marker, i) => (
+            {isCloselestPRS ? (
+              filteredDataPRS.map((marker, i) => (
+                <MapView.Marker
+                  key={i}
+                  coordinate={{
+                    latitude: marker?.geometry?.coordinates[1],
+                    longitude: marker?.geometry?.coordinates[0],
+                  }}
+                  title={marker?.properties?.llib_prs}
+                  description={marker?.properties?.lobs_prs}
+                  pinColor={colors.orange}
+                >
+                  <Callout>
+                    <View>
+                      <Text>{marker?.properties?.llib_prs}</Text>
+                      <Text>{marker?.properties?.lobs_prs}</Text>
+                      <Text>Latitude : {marker?.geometry?.coordinates[1]}</Text>
+                      <Text>
+                        Longitude : {marker?.geometry?.coordinates[0]}
+                      </Text>
+                    </View>
+                  </Callout>
+                </MapView.Marker>
+              ))
+            ) : (
               <MapView.Marker
-                key={i}
                 coordinate={{
-                  latitude: marker?.geometry?.coordinates[1],
-                  longitude: marker?.geometry?.coordinates[0],
+                  latitude: closelestPRS?.geometry?.coordinates[1],
+                  longitude: closelestPRS?.geometry?.coordinates[0],
                 }}
-                title={marker?.properties?.llib_prs}
-                description={marker?.properties?.lobs_prs}
-                pinColor={
-                  filteredDataPRS.length === 1
-                    ? colors.darkGreen
-                    : colors.orange
-                }
-              >
-                <Callout>
-                  <View>
-                    <Text>{marker?.properties?.llib_prs}</Text>
-                    <Text>{marker?.properties?.lobs_prs}</Text>
-                    <Text>Latitude : {marker?.geometry?.coordinates[1]}</Text>
-                    <Text>Longitude : {marker?.geometry?.coordinates[0]}</Text>
-                  </View>
-                </Callout>
-              </MapView.Marker>
-            ))}
+                title={closelestPRS?.properties?.llib_prs}
+                description={closelestPRS?.properties?.lobs_prs}
+                pinColor={colors.red}
+              />
+            )}
           </MapView>
         }
       </View>

@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    color: '#fff',
     fontSize: 17,
     color: colors.black,
     flex: 1,

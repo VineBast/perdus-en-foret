@@ -19,6 +19,7 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
   const dispatch = useDispatch();
   const user = useSelector(userSelector).user;
 
+  const [isPinPress, setIsPinPress] = useState(false);
   const [optionOpen, setOptionOpen] = useState(isOpen);
   const [modalVisible, setModalVisible] = useState(false);
   const [name, setName] = useState('');
@@ -40,6 +41,11 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
     dispatch(cleanUserOnLogout());
     logout(navigation);
   };
+
+  function onPinPress() {
+    pin();
+    setIsPinPress(!isPinPress);
+  }
 
   const renderOptions = () => {
     if (optionOpen) {
@@ -68,12 +74,18 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
             </Pressable>
           )}
           {pin && (
-            <Pressable style={[style.buttonRounded, style.smallButton]}>
+            <Pressable
+              onPress={onPinPress}
+              style={[
+                style.buttonRounded,
+                style.smallButton,
+                { backgroundColor: isPinPress ? colors.red : colors.white },
+              ]}
+            >
               <Ionicons
-                onPress={pin}
                 name={'pin'}
                 size={20}
-                color={colors.darkGreen}
+                color={isPinPress ? colors.white : colors.darkGreen}
               />
             </Pressable>
           )}
@@ -147,14 +159,14 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
             <View style={{ flexDirection: 'row' }}>
               <SubmitButton
                 style={{ padding: 20, flex: 1 }}
-                label='Ajouter'
-                onPress={onAddFavorite}
-              />
-              <SubmitButton
-                style={{ padding: 20, flex: 1, marginLeft: 10 }}
                 label='Annuler'
                 orange
                 onPress={() => setModalVisible(false)}
+              />
+              <SubmitButton
+                style={{ padding: 20, flex: 1, marginLeft: 10 }}
+                label='Ajouter'
+                onPress={onAddFavorite}
               />
             </View>
           </View>
