@@ -141,7 +141,7 @@ export function ItineraryScreen({ navigation }) {
               coordinate={coordinate}
               title={'title'}
               description={'description'}
-              pinColor={colors.orange}
+              pinColor={colors.green}
             />
           ))}
           {isNative ? (
@@ -155,6 +155,8 @@ export function ItineraryScreen({ navigation }) {
               apikey={GOOGLE_MAPS_APIKEY}
               precision='high'
               mode='WALKING'
+              strokeWidth={3}
+              strokeColor={colors.orange}
             />
           ) : (
             <MapView.Polyline coordinates={itinerary} />
