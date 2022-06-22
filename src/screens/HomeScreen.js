@@ -131,7 +131,11 @@ export function HomeScreen({ navigation }) {
                 }}
                 title={marker?.properties?.llib_prs}
                 description={marker?.properties?.lobs_prs}
-                pinColor={colors.orange}
+                pinColor={
+                  filteredDataPRS.length === 1
+                    ? colors.darkGreen
+                    : colors.orange
+                }
               >
                 <Callout>
                   <View>
