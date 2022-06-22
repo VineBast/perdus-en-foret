@@ -2,20 +2,17 @@ import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import * as data from '../../assets/PRS/PRS_FR.json';
-import { Background, OptionButton } from '.././components';
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useSelector } from 'react-redux';
+import * as data from '../../assets/PRS/PRS_FR.json';
 import { BackButton, Background, OptionButton } from '.././components';
 import { userSelector } from '../redux/userSlice';
 
-import * as data from '../../assets/PRS/PRS_FR.json';
 import { colors } from '../core/theme';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
 export function HomeScreen({ navigation }) {
+  const user = useSelector(userSelector).user;
+
   const [location, setLocation] = useState({
     coords: { latitude: 48.860708, longitude: 2.337322 },
   });

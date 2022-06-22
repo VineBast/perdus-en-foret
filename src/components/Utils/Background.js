@@ -1,16 +1,9 @@
-import {
-  View,
-  KeyboardAvoidingView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { theme } from '../../core/theme';
 
 export function Background({ children, style }) {
   return (
-    <View
-      style={[styles.background, style]}
-    >
+    <View style={[styles.background, style]}>
       <KeyboardAvoidingView style={styles.container} behavior='padding'>
         {children}
       </KeyboardAvoidingView>
