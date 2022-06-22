@@ -2,16 +2,16 @@ import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import * as dataPRS from '../../assets/PRS/PRS_FR.json';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import { BackButton, Background, OptionButton } from '../components';
 
-import { colors } from '../core/theme';
-import { userSelector } from '../redux/userSlice';
-
 import MapViewDirections from 'react-native-maps-directions';
 import { GOOGLE_MAPS_APIKEY } from '../../.env.js';
+import { colors } from '../core/theme';
+import { userSelector } from '../redux/userSlice';
 
 export function ItineraryScreen({ navigation }) {
   const user = useSelector(userSelector).user;
@@ -20,9 +20,24 @@ export function ItineraryScreen({ navigation }) {
   const [isStepInProgress, setIsStepInProgress] = useState(false);
   const [isFlash, setIsFlash] = useState(false);
   const [isNative, setIsNative] = useState(false);
+  const [PRS, setPRS] = useState(filterDataPRS());
 
   const googleMap = useRef(null);
   const itineraryWithStep = createItineraryWithStep();
+
+  function filterDataPRS() {
+    let latitudeNord = createSteps(0).latitude + 1;
+    let latitudeSud = createSteps(0).latitude - 1;
+    let longitudeOuest = createSteps(0).longitude - 1;
+    let longitudeEst = createSteps(0).longitude + 1;
+    return dataPRS.features.filter(
+      (elm) =>
+        elm.geometry.coordinates[0] < longitudeEst &&
+        elm.geometry.coordinates[0] > longitudeOuest &&
+        elm.geometry.coordinates[1] < latitudeNord &&
+        elm.geometry.coordinates[1] > latitudeSud
+    );
+  }
 
   useEffect(() => {
     if (Platform.OS === ('ios' || 'android')) {
@@ -36,7 +51,9 @@ export function ItineraryScreen({ navigation }) {
         zoomOnMap(itinerary);
       }
     }
-  }, [isStepInProgress, currentStep]);
+    console.log('ItineraryScreen', itinerary);
+    console.log('PRS', PRS);
+  }, [isStepInProgress, currentStep, PRS]);
 
   function createSteps(index) {
     return {
@@ -142,6 +159,18 @@ export function ItineraryScreen({ navigation }) {
               title={'title'}
               description={'description'}
               pinColor={colors.orange}
+            />
+          ))}
+          {PRS.map((coordinate, i) => (
+            <MapView.Marker
+              key={i}
+              coordinate={{
+                latitude: coordinate.geometry.coordinates[1],
+                longitude: coordinate.geometry.coordinates[0],
+              }}
+              title={coordinate.properties.llib_prs}
+              description={coordinate.properties.lobs_prs}
+              pinColor={colors.darkGreen}
             />
           ))}
           {isNative ? (
