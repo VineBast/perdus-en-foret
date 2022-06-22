@@ -19,24 +19,27 @@ export function HomeScreen({ navigation }) {
   const [location, setLocation] = useState({
     coords: { latitude: 48.860708, longitude: 2.337322 },
   });
-  const [errorMsg, setErrorMsg] = useState(null);
   const googleMap = useRef(null);
   const dataPRS = data.features; //dataPRS.geometry.coordinates[1] = latitude , dataPRS.geometry.coordinates[0] = longitude
   const [filteredDataPRS, setFilteredDataPRS] = useState(
     filterDataPRS(location)
   );
+  const [userLocation, setUserLocation] = useState({
+    coords: { latitude: 48.860708, longitude: 2.337322 },
+  });
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        console.log('Permission to access location was denied');
         return;
       }
-      let location = await Location.getCurrentPositionAsync({});
-      setFilteredDataPRS(filterDataPRS(location));
-      changeRegion(location);
-      setLocation(location);
+      let tempLocation = await Location.getCurrentPositionAsync({});
+      setFilteredDataPRS(filterDataPRS(tempLocation));
+      changeRegion(tempLocation);
+      setLocation(tempLocation);
+      setUserLocation(tempLocation);
     })();
   }, []);
 
@@ -48,6 +51,40 @@ export function HomeScreen({ navigation }) {
       longitudeDelta: 0.506866,
     });
   };
+
+  function findClosestPRS() {
+    const transformUserLocation = {
+      latitude: userLocation.coords.latitude,
+      longitude: userLocation.coords.longitude,
+    };
+
+    let lowerAbsolute = transformUserLocation;
+    let index;
+
+    dataPRS.forEach((PRS, i) => {
+      const PRSLocation = {
+        latitude: PRS.properties.qlat_prs,
+        longitude: PRS.properties.qlon_prs,
+      };
+
+      const absoluteDistance = {
+        latitude: Math.abs(
+          transformUserLocation.latitude - PRSLocation.latitude
+        ),
+        longitude: Math.abs(
+          transformUserLocation.longitude - PRSLocation.longitude
+        ),
+      };
+      if (
+        absoluteDistance.latitude < lowerAbsolute.latitude &&
+        absoluteDistance.longitude < lowerAbsolute.longitude
+      ) {
+        lowerAbsolute = absoluteDistance;
+        index = i;
+      }
+    });
+    setFilteredDataPRS([dataPRS[index]]);
+  }
 
   function filterDataPRS(location) {
     let latitudeNord = location.coords.latitude + 0.2;
@@ -66,7 +103,7 @@ export function HomeScreen({ navigation }) {
   return (
     <Background>
       {!user.uid && <BackButton goBack={navigation.goBack} />}
-      <OptionButton navigation={navigation} />
+      <OptionButton pin={findClosestPRS} navigation={navigation} />
       <View style={style.container}>
         {
           <MapView
@@ -98,19 +135,23 @@ export function HomeScreen({ navigation }) {
               <MapView.Marker
                 key={i}
                 coordinate={{
-                  latitude: marker.geometry.coordinates[1],
-                  longitude: marker.geometry.coordinates[0],
+                  latitude: marker?.geometry?.coordinates[1],
+                  longitude: marker?.geometry?.coordinates[0],
                 }}
-                title={marker.properties.llib_prs}
-                description={marker.properties.lobs_prs}
-                pinColor={colors.orange}
+                title={marker?.properties?.llib_prs}
+                description={marker?.properties?.lobs_prs}
+                pinColor={
+                  filteredDataPRS.length === 1
+                    ? colors.darkGreen
+                    : colors.orange
+                }
               >
                 <Callout>
                   <View>
-                    <Text>{marker.properties.llib_prs}</Text>
-                    <Text>{marker.properties.lobs_prs}</Text>
-                    <Text>Latitude : {marker.geometry.coordinates[1]}</Text>
-                    <Text>Longitude : {marker.geometry.coordinates[0]}</Text>
+                    <Text>{marker?.properties?.llib_prs}</Text>
+                    <Text>{marker?.properties?.lobs_prs}</Text>
+                    <Text>Latitude : {marker?.geometry?.coordinates[1]}</Text>
+                    <Text>Longitude : {marker?.geometry?.coordinates[0]}</Text>
                   </View>
                 </Callout>
               </MapView.Marker>
