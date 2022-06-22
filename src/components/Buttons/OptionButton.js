@@ -13,7 +13,7 @@ import {
 import { logout } from '../../services/firebase';
 import { TextInput } from '../Inputs';
 
-export function OptionButton({ navigation, favorite, print, isOpen }) {
+export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
   //Redux
   const dispatch = useDispatch();
   const user = useSelector(userSelector).user;
@@ -68,6 +68,16 @@ export function OptionButton({ navigation, favorite, print, isOpen }) {
               />
             </Pressable>
           )}
+          {pin && (
+            <Pressable style={[style.buttonRounded, style.smallButton]}>
+              <Ionicons
+                onPress={pin}
+                name={'pin'}
+                size={20}
+                color={colors.darkGreen}
+              />
+            </Pressable>
+          )}
 
           <Pressable
             onPress={onLogoutPress}
@@ -81,6 +91,16 @@ export function OptionButton({ navigation, favorite, print, isOpen }) {
           {print && (
             <Pressable style={[style.buttonRounded, style.smallButton]}>
               <Ionicons name={'print'} size={20} color={colors.darkGreen} />
+            </Pressable>
+          )}
+          {pin && (
+            <Pressable style={[style.buttonRounded, style.smallButton]}>
+              <Ionicons
+                onPress={pin}
+                name={'pin'}
+                size={20}
+                color={colors.darkGreen}
+              />
             </Pressable>
           )}
           <Pressable
