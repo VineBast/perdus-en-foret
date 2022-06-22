@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useSelector } from 'react-redux';
-import { Background, OptionButton } from '.././components';
+import { BackButton, Background, OptionButton } from '.././components';
 import { userSelector } from '../redux/userSlice';
 
 import * as data from '../../assets/PRS/PRS_FR.json';
@@ -63,6 +63,7 @@ export function HomeScreen({ navigation }) {
 
   return (
     <Background>
+      <BackButton goBack={navigation.goBack} />
       <OptionButton navigation={navigation} />
       <View style={style.container}>
         <MapView

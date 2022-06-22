@@ -25,7 +25,8 @@ export function Modal({
       swipeDirection="down"
       backdropOpacity={0.4}
       propagateSwipe={true}
-      style={[{ margin: 0, marginTop: window ? (window.height / 3) : 200 }, position.columnCenter]}
+      style={{ margin: 0, display: 'flex', justifyContent: 'flex-end' }}
+      avoidKeyboard
       {...props}
     >
       {children}

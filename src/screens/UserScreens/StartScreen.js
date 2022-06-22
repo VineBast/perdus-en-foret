@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
+import { ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { useDispatch } from 'react-redux';
 import { Background, SubmitButton, TextInput, Title } from '../../components';
 import { colors } from '../../core/theme';
@@ -24,61 +24,66 @@ export function StartScreen({ navigation }) {
 
   return (
     <Background>
-      <View style={{ width: '80%' }}>
-        <Title>Se connecter ou s’inscrire</Title>
-        <TextInput
-          label='Email'
-          returnKeyType='next'
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          autoCapitalize='none'
-          autoCompleteType='email'
-          textContentType='emailAddress'
-          keyboardType='email-address'
-        />
-        <TextInput
-          label='Mot de passe'
-          returnKeyType='done'
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-        />
-        <View style={style.forgotPassword}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ResetPasswordScreen')}
-          >
-            <Text style={{ color: colors.grey3 }}>Mot de passe oublié ?</Text>
-          </TouchableOpacity>
-        </View>
-        <SubmitButton
-          style={{ padding: 20 }}
-          label='Se connecter'
-          onPress={() => userLogin(email, password)}
-        />
-        <View style={style.textSignUp}>
-          <Text style={{ color: colors.grey3 }}>
-            Vous n'avez pas encore de compte ?{' '}
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
-            <Text style={{ color: colors.green, fontWeight: 'bold' }}>
-              S'inscrire
+      <ScrollView
+        style={{ width: '100%', flex: 1 }}
+        keyboardShouldPersistTaps='handled'
+      >
+        <View style={{ paddingTop: 40 + getStatusBarHeight(), paddingBottom: 40, paddingHorizontal: 20 }}>
+          <Title>Connexion</Title>
+          <TextInput
+            label='Email'
+            returnKeyType='next'
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            autoCapitalize='none'
+            autoCompleteType='email'
+            textContentType='emailAddress'
+            keyboardType='email-address'
+          />
+          <TextInput
+            label='Mot de passe'
+            returnKeyType='done'
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          />
+          <View style={style.forgotPassword}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ResetPasswordScreen')}
+            >
+              <Text style={{ color: colors.grey3 }}>Mot de passe oublié ?</Text>
+            </TouchableOpacity>
+          </View>
+          <SubmitButton
+            style={{ padding: 20 }}
+            label='Se connecter'
+            onPress={() => userLogin(email, password)}
+          />
+          <View style={style.textSignUp}>
+            <Text style={{ color: colors.grey3 }}>
+              Vous n'avez pas encore de compte ?{' '}
             </Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
+              <Text style={{ color: colors.green, fontWeight: 'bold' }}>
+                S'inscrire
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Text
+              style={{ color: '#000', fontWeight: 'bold', marginVertical: 20 }}
+            >
+              OU
+            </Text>
+          </View>
+          <SubmitButton
+            orange
+            style={{ padding: 20 }}
+            label='Continuer sans créer de compte'
+            onPress={() => navigation.navigate('HomeScreen')}
+          />
         </View>
-        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Text
-            style={{ color: '#000', fontWeight: 'bold', marginVertical: 20 }}
-          >
-            OU
-          </Text>
-        </View>
-        <SubmitButton
-          orange
-          style={{ padding: 20 }}
-          label='Continuer sans créer de compte'
-          onPress={() => navigation.navigate('HomeScreen')}
-        />
-      </View>
+      </ScrollView>
     </Background>
   );
 }
@@ -91,7 +96,7 @@ const style = StyleSheet.create({
     marginRight: 30,
   },
   textSignUp: {
-    marginTop: 100,
+    marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },

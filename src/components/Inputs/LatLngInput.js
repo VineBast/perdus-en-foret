@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { colors, position } from '../../core/theme';
 import { CircleIcon, MarkerIcon } from '../Icons';
@@ -72,6 +72,7 @@ export function LatLngInput({
           value={latInput}
           placeholder='latitude...'
           placeholderTextColor={colors.disabledText}
+          keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'numeric'}
         />
         <View style={styles.separator} />
         <TextInput
@@ -80,6 +81,7 @@ export function LatLngInput({
           value={lngInput}
           placeholder='longitude...'
           placeholderTextColor={colors.disabledText}
+          keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'numeric'}
         />
         {showDelete && (
           <TouchableOpacity

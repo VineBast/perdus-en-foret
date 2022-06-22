@@ -2,6 +2,7 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   StyleSheet,
+  View,
 } from 'react-native';
 import { theme } from '../../core/theme';
 
@@ -12,9 +13,9 @@ export function Background({ children, style }) {
       resizeMode='repeat'
       style={[styles.background, style]}
     >
-      <KeyboardAvoidingView style={styles.container} behavior='padding'>
+      <View style={styles.container}>
         {children}
-      </KeyboardAvoidingView>
+      </View>
     </ImageBackground>
   );
 }

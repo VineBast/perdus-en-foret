@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View, Text } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View, Text, KeyboardAvoidingView } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import uuid from 'react-native-uuid';
 import { useDispatch, useSelector } from 'react-redux';
@@ -200,16 +200,17 @@ export function ItineraryPlannedModal({ navigation }) {
             style={{ width: '100%' }}
             keyboardDismissMode={'on-drag'}
             showsVerticalScrollIndicator={false}
+            stickyHeaderIndices={[0]}
           >
+            <View style={{ paddingHorizontal: 27 }}>
+              <SubmitButton
+                label="Voir l'itinéraire"
+                disabled={!isValidSubmit}
+                onPress={openItineraryScreen}
+                style={{ marginVertical: 0 }}
+              />
+            </View>
             <View onStartShouldSetResponder={() => true}>
-              <View style={[position.columnCenter, { paddingHorizontal: 27 }]}>
-                <SubmitButton
-                  label="Voir l'itinéraire"
-                  disabled={!isValidSubmit}
-                  onPress={openItineraryScreen}
-                  style={{ marginVertical: 0 }}
-                />
-              </View>
               <View style={[position.rowCenter, { marginTop: 14 }]}>
                 <View style={{ flex: 1 }}>
                   {currentItinerary && [...currentItinerary.points].map((point, i, points) => {
@@ -258,6 +259,7 @@ export function ItineraryPlannedModal({ navigation }) {
                 />
               )}
             </View>
+            <View style={{ height: 40 }} />
           </ScrollView>
         </View>
       </Modal>
@@ -304,9 +306,8 @@ const style = StyleSheet.create({
   },
   openedModalContainer: {
     width: '100%',
-    height: '100%',
+    maxHeight: '90%',
     paddingHorizontal: 16,
-    paddingBottom: 50,
     backgroundColor: colors.darkGreen,
     borderTopLeftRadius: general.bigBorderRadius,
     borderTopRightRadius: general.bigBorderRadius,
