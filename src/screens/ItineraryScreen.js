@@ -25,11 +25,12 @@ export function ItineraryScreen({ navigation }) {
   const googleMap = useRef(null);
   const itineraryWithStep = createItineraryWithStep();
 
+  //Filtre les PRS avec deux points
   function filterDataPRS() {
-    let latitudeNord = createSteps(0).latitude + 1;
-    let latitudeSud = createSteps(0).latitude - 1;
-    let longitudeOuest = createSteps(0).longitude - 1;
-    let longitudeEst = createSteps(0).longitude + 1;
+    let latitudeNord = itinerary[0].latitude + 0.2;
+    let latitudeSud = itinerary[1].latitude - 0.2;
+    let longitudeOuest = itinerary[0].longitude - 0.2;
+    let longitudeEst = itinerary[1].longitude + 0.2;
     return dataPRS.features.filter(
       (elm) =>
         elm.geometry.coordinates[0] < longitudeEst &&
