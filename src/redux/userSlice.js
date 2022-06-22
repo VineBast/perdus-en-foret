@@ -28,11 +28,10 @@ const userSlice = createSlice({
       let countRecent = state.itineraries
         .filter(ele => ele.type === 'recent').length
 
-      if(countRecent >= 10) {
+      if(countRecent >= 5) {
         const array = [...state.itineraries]
-        //.sort((a, b) => new Date(a.date) - new Date(b.date))
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
         .slice(1, state.itineraries.length)
-        console.log(array)
         //Firebase update
         if (state.uid) {
           updateUser({
