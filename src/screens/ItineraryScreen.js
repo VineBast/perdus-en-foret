@@ -25,12 +25,17 @@ export function ItineraryScreen({ navigation }) {
   const googleMap = useRef(null);
   const itineraryWithStep = createItineraryWithStep();
 
-  //Filtre les PRS avec deux points
   function filterDataPRS() {
-    let latitudeNord = itinerary[0].latitude + 0.2;
-    let latitudeSud = itinerary[1].latitude - 0.2;
-    let longitudeOuest = itinerary[0].longitude - 0.2;
-    let longitudeEst = itinerary[1].longitude + 0.2;
+    let last = Object.keys(itinerary).length - 1;
+    let first = 0;
+    if (itinerary[first].longitude > itinerary[last].longitude) {
+      first = last;
+      last = 0;
+    }
+    let latitudeNord = itinerary[first].latitude + 0.2;
+    let latitudeSud = itinerary[last].latitude - 0.2;
+    let longitudeOuest = itinerary[first].longitude - 0.2;
+    let longitudeEst = itinerary[last].longitude + 0.2;
     return dataPRS.features.filter(
       (elm) =>
         elm.geometry.coordinates[0] < longitudeEst &&
@@ -52,8 +57,6 @@ export function ItineraryScreen({ navigation }) {
         zoomOnMap(itinerary);
       }
     }
-    console.log('ItineraryScreen', itinerary);
-    console.log('PRS', PRS);
   }, [isStepInProgress, currentStep, PRS]);
 
   function createSteps(index) {
