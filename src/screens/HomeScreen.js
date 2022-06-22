@@ -1,58 +1,52 @@
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { useSelector } from 'react-redux';
-import { Background, OptionButton } from '.././components';
-import { userSelector } from '../redux/userSlice';
-
+import * as Location from 'expo-location';
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import * as data from '../../assets/PRS/PRS_FR.json';
+import { Background, OptionButton } from '.././components';
 import { colors } from '../core/theme';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
 export function HomeScreen({ navigation }) {
-  const user = useSelector(userSelector).user;
-  const dataPRS = useState(data.features); //dataPRS.geometry.coordinates[1] = latitude , dataPRS.geometry.coordinates[0] = longitude
-
-  //Coordonnées par points du Nord-Ouest jusqu'au Sud-Ouest dans le sens des aiguilles d'une montre
-  //dans le cas présent les points font un rectangle en forme de smartphone autour de l'Ile-de-France
-  const [coordinates] = useState([
-    //Point 0 : Nord-Ouest
-    {
-      latitude: 49.334252,
-      longitude: 1.942471,
-    },
-    //Point 1 : Nord-Est
-    {
-      latitude: 49.334252,
-      longitude: 2.63375,
-    },
-    //Point 2 : Sud-Est
-    {
-      latitude: 48.639048,
-      longitude: 2.63375,
-    },
-    //Point 3 : Sud-Ouest
-    {
-      latitude: 48.639048,
-      longitude: 1.942471,
-    },
-  ]);
-  const [filteredDataPRS, setFilteredDataPRS] = useState(() =>
-    filterDataPRS(
-      coordinates[0].latitude,
-      coordinates[2].latitude,
-      coordinates[0].longitude,
-      coordinates[1].longitude
-    )
+  const [location, setLocation] = useState({
+    coords: { latitude: 49.860708, longitude: 2.337322 },
+  });
+  const [errorMsg, setErrorMsg] = useState(null);
+  const googleMap = useRef(null);
+  const dataPRS = data.features; //dataPRS.geometry.coordinates[1] = latitude , dataPRS.geometry.coordinates[0] = longitude
+  const [filteredDataPRS, setFilteredDataPRS] = useState(
+    filterDataPRS(location)
   );
 
-  function filterDataPRS(
-    latitudeNord,
-    latitudeSud,
-    longitudeOuest,
-    longitudeEst
-  ) {
-    return dataPRS[0].filter(
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setFilteredDataPRS(filterDataPRS(location));
+      changeRegion(location);
+      setLocation(location);
+    })();
+  }, []);
+
+  const changeRegion = (location) => {
+    googleMap.current.animateToRegion({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.504757,
+      longitudeDelta: 0.506866,
+    });
+  };
+
+  function filterDataPRS(location) {
+    let latitudeNord = location.coords.latitude + 0.2;
+    let latitudeSud = location.coords.latitude - 0.2;
+    let longitudeOuest = location.coords.longitude - 0.2;
+    let longitudeEst = location.coords.longitude + 0.2;
+    return dataPRS.filter(
       (elm) =>
         elm.geometry.coordinates[0] < longitudeEst &&
         elm.geometry.coordinates[0] > longitudeOuest &&
@@ -65,30 +59,55 @@ export function HomeScreen({ navigation }) {
     <Background>
       <OptionButton navigation={navigation} />
       <View style={style.container}>
-        <MapView
-          showsUserLocation={true}
-          followUserLocation={true}
-          style={style.map}
-          initialRegion={{
-            latitude: 48.892872,
-            longitude: 2.247802,
-            latitudeDelta: 0.65,
-            longitudeDelta: 0.65,
-          }}
-        >
-          {filteredDataPRS.map((marker, i) => (
-            <MapView.Marker
-              key={i}
-              coordinate={{
-                latitude: marker.geometry.coordinates[1],
-                longitude: marker.geometry.coordinates[0],
-              }}
-              title={'title'}
-              description={'description'}
-              pinColor={colors.orange}
-            />
-          ))}
-        </MapView>
+        {
+          <MapView
+            focusable={true}
+            showsUserLocation={true}
+            followUserLocation={true}
+            showsMyLocationButton={false}
+            showsCompass={false}
+            ref={googleMap}
+            style={style.map}
+            onRegionChangeComplete={(status) =>
+              setFilteredDataPRS(
+                filterDataPRS({
+                  coords: {
+                    latitude: status.latitude,
+                    longitude: status.longitude,
+                  },
+                })
+              )
+            }
+            initialRegion={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.504757,
+              longitudeDelta: 0.506866,
+            }}
+          >
+            {filteredDataPRS.map((marker, i) => (
+              <MapView.Marker
+                key={i}
+                coordinate={{
+                  latitude: marker.geometry.coordinates[1],
+                  longitude: marker.geometry.coordinates[0],
+                }}
+                title={marker.properties.llib_prs}
+                description={marker.properties.lobs_prs}
+                pinColor={colors.orange}
+              >
+                <Callout>
+                  <View>
+                    <Text>{marker.properties.llib_prs}</Text>
+                    <Text>{marker.properties.lobs_prs}</Text>
+                    <Text>Latitude : {marker.geometry.coordinates[1]}</Text>
+                    <Text>Longitude : {marker.geometry.coordinates[0]}</Text>
+                  </View>
+                </Callout>
+              </MapView.Marker>
+            ))}
+          </MapView>
+        }
       </View>
       <ItineraryPlannedModal navigation={navigation} />
     </Background>
@@ -103,5 +122,39 @@ const style = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  containerCallout: {
+    flexDirection: 'column',
+    alignSelf: 'flex-start',
+  },
+  bubble: {
+    width: 140,
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    backgroundColor: '#4da2ab',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 6,
+    borderColor: '#007a87',
+    borderWidth: 0.5,
+  },
+  amount: {
+    flex: 1,
+  },
+  arrow: {
+    backgroundColor: 'transparent',
+    borderWidth: 16,
+    borderColor: 'transparent',
+    borderTopColor: '#4da2ab',
+    alignSelf: 'center',
+    marginTop: -32,
+  },
+  arrowBorder: {
+    backgroundColor: 'transparent',
+    borderWidth: 16,
+    borderColor: 'transparent',
+    borderTopColor: '#007a87',
+    alignSelf: 'center',
+    marginTop: -0.5,
   },
 });
