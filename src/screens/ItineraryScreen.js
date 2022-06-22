@@ -2,16 +2,16 @@ import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import * as dataPRS from '../../assets/PRS/PRS_FR.json';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import { BackButton, Background, OptionButton } from '../components';
 
-import { colors } from '../core/theme';
-import { userSelector } from '../redux/userSlice';
-
 import MapViewDirections from 'react-native-maps-directions';
 import { GOOGLE_MAPS_APIKEY } from '../../.env.js';
+import { colors } from '../core/theme';
+import { userSelector } from '../redux/userSlice';
 
 export function ItineraryScreen({ navigation }) {
   const user = useSelector(userSelector).user;
@@ -22,7 +22,8 @@ export function ItineraryScreen({ navigation }) {
   const [isNative, setIsNative] = useState(false);
 
   const googleMap = useRef(null);
-  const itineraryWithStep = createItineraryWithStep();
+  const itineraryWithStep = createItineraryWithStep(true);
+  const PRS = filterDataPRS();
 
   useEffect(() => {
     if (Platform.OS === ('ios' || 'android')) {
@@ -38,24 +39,75 @@ export function ItineraryScreen({ navigation }) {
     }
   }, [isStepInProgress, currentStep]);
 
-  function createSteps(index) {
-    return {
-      latitude: (itinerary[index].latitude + itinerary[index + 1].latitude) / 2,
-      longitude:
-        (itinerary[index].longitude + itinerary[index + 1].longitude) / 2,
-    };
+  function filterDataPRS() {
+    let list = [];
+    createItineraryWithStep(false).forEach((step) => {
+      let latitudeNord = step.latitude + 0.08;
+      let latitudeSud = step.latitude - 0.08;
+      let longitudeOuest = step.longitude - 0.08;
+      let longitudeEst = step.longitude + 0.08;
+      list.push(
+        dataPRS.features.filter(
+          (elm) =>
+            elm.geometry.coordinates[0] < longitudeEst &&
+            elm.geometry.coordinates[0] > longitudeOuest &&
+            elm.geometry.coordinates[1] < latitudeNord &&
+            elm.geometry.coordinates[1] > latitudeSud
+        )
+      );
+    });
+    return list.flat();
   }
 
-  function createItineraryWithStep() {
+  function numberStepBetweenTwoPoints(list, index) {
+    const distance = {
+      latitude: Math.abs(list[index].latitude - list[index + 1].latitude),
+      longitude: Math.abs(list[index].longitude - list[index + 1].longitude),
+    };
+
+    return distance.latitude >= distance.longitude
+      ? distance.latitude / 0.5
+      : distance.longitude / 0.5;
+  }
+
+  function createSteps(isInit, index) {
+    const nbrStep = isInit ? 0 : numberStepBetweenTwoPoints(itinerary, index);
+    const list = [
+      {
+        latitude:
+          (itinerary[index].latitude + itinerary[index + 1].latitude) / 2,
+        longitude:
+          (itinerary[index].longitude + itinerary[index + 1].longitude) / 2,
+      },
+    ];
+
+    for (let i = 0; i < Math.pow(2, nbrStep) - 1; i++) {
+      const point = {
+        latitude: (itinerary[index].latitude + list[i].latitude) / 2,
+        longitude: (itinerary[index].longitude + list[i].longitude) / 2,
+      };
+
+      const point2 = {
+        latitude: (list[i].latitude + itinerary[index + 1].latitude) / 2,
+        longitude: (list[i].longitude + itinerary[index + 1].longitude) / 2,
+      };
+
+      list.push(point, point2);
+    }
+
+    return list;
+  }
+
+  function createItineraryWithStep(isInit) {
     const list = [];
     itinerary.forEach((_, i) => {
       list.push({
         latitude: itinerary[i].latitude,
         longitude: itinerary[i].longitude,
       });
-      if (i < itinerary.length - 1) list.push(createSteps(i));
+      if (i < itinerary.length - 1) list.push(createSteps(isInit, i));
     });
-    return list;
+    return list.flat();
   }
 
   function zoomOnMap(itineraryFit) {
@@ -98,15 +150,11 @@ export function ItineraryScreen({ navigation }) {
       });
       snapshot.then((uri) => {
         MediaLibrary.createAssetAsync(uri);
+        setIsFlash(true);
+        setTimeout(() => setIsFlash(false), 30);
         isNext && onNextArrowPress();
       });
     }
-  }
-
-  async function takeOneSnapshot(isNext) {
-    await takeScreenshot(isNext);
-    setIsFlash(true);
-    setTimeout(() => setIsFlash(false), 30);
   }
 
   return (
@@ -144,6 +192,18 @@ export function ItineraryScreen({ navigation }) {
               pinColor={colors.green}
             />
           ))}
+          {PRS?.map((coordinate, i) => (
+            <MapView.Marker
+              key={i}
+              coordinate={{
+                latitude: coordinate.geometry.coordinates[1],
+                longitude: coordinate.geometry.coordinates[0],
+              }}
+              title={coordinate.properties.llib_prs}
+              description={coordinate.properties.lobs_prs}
+              pinColor={colors.darkGreen}
+            />
+          ))}
           {isNative ? (
             <MapViewDirections
               region='FR'
@@ -177,7 +237,7 @@ export function ItineraryScreen({ navigation }) {
               </Pressable>
               <Pressable>
                 <Ionicons
-                  onPress={() => takeOneSnapshot(true)}
+                  onPress={() => takeScreenshot(true)}
                   name={'camera'}
                   size={30}
                   color={colors.white}
@@ -198,7 +258,7 @@ export function ItineraryScreen({ navigation }) {
               </Pressable>
               <Pressable>
                 <Ionicons
-                  onPress={takeOneSnapshot}
+                  onPress={takeScreenshot}
                   name={'camera'}
                   size={30}
                   color={colors.white}
