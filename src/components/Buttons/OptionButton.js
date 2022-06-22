@@ -51,7 +51,10 @@ export function OptionButton({ navigation, favorite, print, isOpen }) {
             <Ionicons name={'settings'} size={20} color={colors.darkGreen} />
           </Pressable>
           {print && (
-            <Pressable style={[style.buttonRounded, style.smallButton]}>
+            <Pressable
+              onPress={() => window.print()}
+              style={[style.buttonRounded, style.smallButton]}
+            >
               <Ionicons name={'print'} size={20} color={colors.darkGreen} />
             </Pressable>
           )}
