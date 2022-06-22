@@ -9,7 +9,7 @@ import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
 export function HomeScreen({ navigation }) {
   const [location, setLocation] = useState({
-    coords: { latitude: 49.860708, longitude: 2.337322 },
+    coords: { latitude: 48.860708, longitude: 2.337322 },
   });
   const [errorMsg, setErrorMsg] = useState(null);
   const googleMap = useRef(null);
