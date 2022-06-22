@@ -86,9 +86,11 @@ export function ItineraryScreen({ navigation }) {
     }
   }
 
-  async function takeSnapshot(isNext) {
-    const status = await MediaLibrary.getPermissionsAsync();
-    if (status.granted) {
+  async function takeScreenshot(isNext) {
+    let { status } = await MediaLibrary.requestPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+    } else {
       const snapshot = googleMap.current.takeSnapshot({
         format: 'png', // image formats: 'png', 'jpg' (default: 'png')
         quality: 0.8, // image quality: 0..1 (only relevant for jpg, default: 1)
@@ -102,7 +104,7 @@ export function ItineraryScreen({ navigation }) {
   }
 
   async function takeOneSnapshot(isNext) {
-    await takeSnapshot(isNext);
+    await takeScreenshot(isNext);
     setIsFlash(true);
     setTimeout(() => setIsFlash(false), 30);
   }
