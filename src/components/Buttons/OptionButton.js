@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import uuid from 'react-native-uuid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -12,6 +12,7 @@ import {
 } from '../../redux/userSlice';
 import { logout } from '../../services/firebase';
 import { TextInput } from '../Inputs';
+import { SubmitButton } from './SubmitButton';
 
 export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
   //Redux
@@ -139,14 +140,25 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text>Entrer un nom pour votre favoris</Text>
-            <TextInput label='Nom' value={name} onChangeText={setName} />
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={onAddFavorite}
-            >
-              <Text style={styles.textStyle}>Ajouter</Text>
-            </Pressable>
+            <TextInput
+              style={{ width: '100%' }}
+              label='Entrer un nom'
+              value={name}
+              onChangeText={setName}
+            />
+            <View style={{ flexDirection: 'row' }}>
+              <SubmitButton
+                style={{ padding: 20, flex: 1 }}
+                label='Ajouter'
+                onPress={onAddFavorite}
+              />
+              <SubmitButton
+                style={{ padding: 20, flex: 1, marginLeft: 10 }}
+                label='Annuler'
+                orange
+                onPress={() => setModalVisible(false)}
+              />
+            </View>
           </View>
         </View>
       </Modal>
@@ -186,6 +198,7 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
+    width: '80%',
     padding: 35,
     alignItems: 'center',
     shadowColor: '#000',
