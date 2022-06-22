@@ -4,6 +4,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import * as data from '../../assets/PRS/PRS_FR.json';
 import { Background, OptionButton } from '.././components';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import { useSelector } from 'react-redux';
+import { BackButton, Background, OptionButton } from '.././components';
+import { userSelector } from '../redux/userSlice';
+
+import * as data from '../../assets/PRS/PRS_FR.json';
 import { colors } from '../core/theme';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
@@ -57,6 +65,7 @@ export function HomeScreen({ navigation }) {
 
   return (
     <Background>
+      {!user.uid && <BackButton goBack={navigation.goBack} />}
       <OptionButton navigation={navigation} />
       <View style={style.container}>
         {

@@ -2,6 +2,7 @@ import {
   View,
   KeyboardAvoidingView,
   StyleSheet,
+  View,
 } from 'react-native';
 import { theme } from '../../core/theme';
 
