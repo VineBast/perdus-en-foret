@@ -20,52 +20,69 @@ export function ListWithOptions({
   return (
     <View style={[style, styles.listContainer]}>
       {filteredItineraries.length > 0 ? (
-        getSortByDate(filteredItineraries, false).map((itinerary, index, array) => {
-          const isLast = index === array.length - 1;
+        getSortByDate(filteredItineraries, false).map(
+          (itinerary, index, array) => {
+            const isLast = index === array.length - 1;
 
-          return (
-            <TouchableOpacity
-              onPress={() => handlePress(itinerary.id)}
-              activeOpacity={0.8}
-              key={itinerary.id}
-              style={[
-                position.rowSpace,
-                styles.listItem,
-                { borderBottomWidth: isLast ? 0 : 1 },
-              ]}
-            >
-              {itinerary.type === 'recent' ? (
-                <MarkerIcon color='rgba(255, 255, 255, 0.9)' />
-              ) : (
-                <Ionicons
-                  name='star'
-                  size={17}
-                  color='rgba(255, 255, 255, 0.9)'
-                />
-              )}
-              <View style={{ flex: 1, marginHorizontal: 10 }}>
-                <Text style={font.desc} numberOfLines={1}>
-                  {isFavoriteSelected
-                    ? itinerary.name || 'Favori'
-                    : `Le ${new Date(itinerary.date).toLocaleDateString('fr')}`}
-                </Text>
-                <Text style={{ fontSize: 13, color: '#fff' }} numberOfLines={1}>
-                  {itinerary.points[0].latitude},{' '}
-                  {itinerary.points[0].longitude} →{' '}
-                  {itinerary.points.length > 2 && '. . .  → '}
-                  {itinerary.points[itinerary.points.length - 1].latitude},{' '}
-                  {itinerary.points[itinerary.points.length - 1].longitude}
-                </Text>
-              </View>
+            return (
               <TouchableOpacity
-                onPress={() => handleDelete(itinerary.id)}
-                style={styles.deleteWrapper}
+                onPress={() => handlePress(itinerary.id)}
+                activeOpacity={0.8}
+                key={itinerary.id}
+                style={[
+                  position.rowSpace,
+                  styles.listItem,
+                  { borderBottomWidth: isLast ? 0 : 1 },
+                ]}
               >
-                <Ionicons name='close-outline' size={14} color={colors.dark} />
+                {itinerary.type === 'recent' ? (
+                  <MarkerIcon color='rgba(255, 255, 255, 0.9)' />
+                ) : (
+                  <Ionicons
+                    name='star'
+                    size={17}
+                    color='rgba(255, 255, 255, 0.9)'
+                  />
+                )}
+                <View style={{ flex: 1, marginHorizontal: 10 }}>
+                  <Text style={font.desc} numberOfLines={1}>
+                    {isFavoriteSelected
+                      ? itinerary.name || 'Favori'
+                      : `Le ${new Date(itinerary.date).toLocaleDateString(
+                          'fr'
+                        )}`}
+                  </Text>
+                  <Text
+                    style={{ fontSize: 13, color: '#fff' }}
+                    numberOfLines={1}
+                  >
+                    {itinerary.points[0].latitude.toFixed(3)},{' '}
+                    {itinerary.points[0].longitude.toFixed(3)} →{' '}
+                    {itinerary.points.length > 2 && '. . .  → '}
+                    {itinerary.points[
+                      itinerary.points.length - 1
+                    ].latitude.toFixed(3)}
+                    ,{' '}
+                    {itinerary.points[
+                      itinerary.points.length - 1
+                    ].longitude.toFixed(3)}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => handleDelete(itinerary.id)}
+                  style={styles.deleteWrapper}
+                >
+                  <Ionicons
+                    name='close-outline'
+                    size={14}
+                    color={colors.dark}
+                  />
+                </TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
-          );
-        })) : (
+            );
+          }
+        )
+      ) : (
         <View style={[styles.emptyTextWrapper, position.rowCenter]}>
           <Text style={styles.emptyText}>
             Pas encore d'itinéraire {isFavoriteSelected ? 'favori' : 'récent'}

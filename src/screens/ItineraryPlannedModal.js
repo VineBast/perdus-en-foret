@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View, Text, KeyboardAvoidingView } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import uuid from 'react-native-uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSortByDate } from '../helpers/sort';
-import isItineraryExist from '../helpers/isItineraryExist';
 import {
   AddPointButton,
   FilterModalSwitch,
@@ -16,6 +14,8 @@ import {
   TopIndicator,
 } from '../components';
 import { colors, general, position } from '../core/theme';
+import isItineraryExist from '../helpers/isItineraryExist';
+import { getSortByDate } from '../helpers/sort';
 import {
   addCurrentItinerary,
   addItinerary,
@@ -24,12 +24,16 @@ import {
   userSelector,
 } from '../redux/userSlice';
 
-export function ItineraryPlannedModal({ navigation }) {
+export function ItineraryPlannedModal({
+  navigation,
+  onMarkerPress,
+  modalVisible,
+  setModalVisible,
+}) {
   //Redux
   const dispatch = useDispatch();
   const user = useSelector(userSelector).user;
 
-  const [modalVisible, setModalVisible] = useState();
   const [currentItinerary, setCurrentItinerary] = useState();
   const [userItineraries, setUserItineraries] = useState();
   const [isFavoriteSelected, setIsFavoriteSelected] = useState(false);
@@ -41,17 +45,20 @@ export function ItineraryPlannedModal({ navigation }) {
   }, [modalVisible]);
 
   const computeIsValidInput = (points) => {
-    const isValidInput = input => (input && input !== '' && typeof Number(input) === 'number' && !isNaN(Number(input)));
-    const isValidLatidude = lat => lat >= -90 && lat <= 90;
-    const isValidLongitude = lng => lng >= -180 && lng <= 180;
+    const isValidInput = (input) =>
+      input &&
+      input !== '' &&
+      typeof Number(input) === 'number' &&
+      !isNaN(Number(input));
+    const isValidLatidude = (lat) => lat >= -90 && lat <= 90;
+    const isValidLongitude = (lng) => lng >= -180 && lng <= 180;
 
     return points.every(
-      point => (
+      (point) =>
         isValidInput(point.latitude) &&
         isValidLatidude(point.latitude) &&
         isValidInput(point.longitude) &&
         isValidLongitude(point.longitude)
-      )
     );
   };
 
@@ -63,16 +70,21 @@ export function ItineraryPlannedModal({ navigation }) {
 
   const openItineraryScreen = () => {
     setModalVisible(false);
-    dispatch(addCurrentItinerary({
-      ...currentItinerary,
-      points: currentItinerary.points.map(point => ({
-        ...point,
-        latitude: Number(point.latitude),
-        longitude: Number(point.longitude)
-      }))
-    }));
+    dispatch(
+      addCurrentItinerary({
+        ...currentItinerary,
+        points: currentItinerary.points.map((point) => ({
+          ...point,
+          latitude: Number(point.latitude),
+          longitude: Number(point.longitude),
+        })),
+      })
+    );
 
-    const itineraryInList = isItineraryExist(currentItinerary, user.itineraries);
+    const itineraryInList = isItineraryExist(
+      currentItinerary,
+      user.itineraries
+    );
     if (itineraryInList === undefined) {
       dispatch(
         addItinerary({
@@ -80,11 +92,11 @@ export function ItineraryPlannedModal({ navigation }) {
           id: uuid.v4(),
           date: new Date().toString(),
           type: 'recent',
-          points: currentItinerary.points.map(point => ({
+          points: currentItinerary.points.map((point) => ({
             ...point,
             latitude: Number(point.latitude),
-            longitude: Number(point.longitude)
-          }))
+            longitude: Number(point.longitude),
+          })),
         })
       );
     } else {
@@ -101,6 +113,15 @@ export function ItineraryPlannedModal({ navigation }) {
         { id: uuid.v4(), latitude: '', longitude: '' },
       ],
     });
+    dispatch(
+      addCurrentItinerary({
+        ...currentItinerary,
+        points: [
+          ...currentItinerary.points,
+          { id: uuid.v4(), latitude: '', longitude: '' },
+        ],
+      })
+    );
   };
 
   const deletePoint = (id) => {
@@ -112,6 +133,13 @@ export function ItineraryPlannedModal({ navigation }) {
       ...currentItinerary,
       points: filteredPoints,
     });
+
+    dispatch(
+      addCurrentItinerary({
+        ...currentItinerary,
+        points: filteredPoints,
+      })
+    );
   };
 
   const reverseGeoPoints = () => {
@@ -124,13 +152,13 @@ export function ItineraryPlannedModal({ navigation }) {
   };
 
   const onChangeInput = ({ id, latitude, longitude }) => {
-    const modifiedPoints = currentItinerary.points.map(point =>
+    const modifiedPoints = currentItinerary.points.map((point) =>
       point.id === id
         ? {
-          ...point,
-          latitude: latitude,
-          longitude: longitude,
-        }
+            ...point,
+            latitude: latitude,
+            longitude: longitude,
+          }
         : point
     );
 
@@ -143,7 +171,7 @@ export function ItineraryPlannedModal({ navigation }) {
   const setSpecificItinerary = (id) => {
     setCurrentItinerary({
       ...currentItinerary,
-      points: userItineraries.find(itinerary => itinerary.id === id).points,
+      points: userItineraries.find((itinerary) => itinerary.id === id).points,
     });
   };
 
@@ -171,22 +199,32 @@ export function ItineraryPlannedModal({ navigation }) {
       onPress: () => setModalVisible(true),
       icon: (
         <Svg width={16} height={16}>
-          <Path fill="#fff" d="M6.005 2.002a4.003 4.003 0 1 0 0 8.006 4.003 4.003 0 0 0 0-8.006zM0 6.005a6.005 6.005 0 1 1 10.898 3.479l4.821 4.82a1 1 0 0 1-1.415 1.415l-4.82-4.82A6.005 6.005 0 0 1 0 6.006z" />
+          <Path
+            fill='#fff'
+            d='M6.005 2.002a4.003 4.003 0 1 0 0 8.006 4.003 4.003 0 0 0 0-8.006zM0 6.005a6.005 6.005 0 1 1 10.898 3.479l4.821 4.82a1 1 0 0 1-1.415 1.415l-4.82-4.82A6.005 6.005 0 0 1 0 6.006z'
+          />
         </Svg>
       ),
-      iconColor: colors.orange
+      iconColor: colors.orange,
     },
     {
       label: 'Charger le dernier itinéraire',
       onPress: setLastItinerary,
       icon: (
         <Svg width={16} height={16}>
-          <Path fill="#fff" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm2.07 11.2L7.434 8.565A.815.815 0 0 1 7.199 8V4a.802.802 0 0 1 1.602 0v3.668l2.398 2.402a.797.797 0 0 1 0 1.13.797.797 0 0 1-1.129 0zm0 0" />
+          <Path
+            fill='#fff'
+            d='M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm2.07 11.2L7.434 8.565A.815.815 0 0 1 7.199 8V4a.802.802 0 0 1 1.602 0v3.668l2.398 2.402a.797.797 0 0 1 0 1.13.797.797 0 0 1-1.129 0zm0 0'
+          />
         </Svg>
       ),
-      iconColor: colors.grey3
+      iconColor: colors.grey3,
     },
   ];
+
+  function onMarkerModalPress(index) {
+    onMarkerPress(index);
+  }
 
   return (
     <>
@@ -213,26 +251,32 @@ export function ItineraryPlannedModal({ navigation }) {
             <View onStartShouldSetResponder={() => true}>
               <View style={[position.rowCenter, { marginTop: 14 }]}>
                 <View style={{ flex: 1 }}>
-                  {currentItinerary && [...currentItinerary.points].map((point, i, points) => {
-                    const isLast = i === points.length - 1;
-                    return (
-                      <LatLngInput
-                        key={point.id}
-                        point={point}
-                        isLast={isLast}
-                        showDelete={points.length > 2}
-                        handleDelete={(id) => deletePoint(id)}
-                        onChange={({ latitude = point.latitude, longitude = point.longitude }) =>
-                          onChangeInput({
-                            id: point.id,
-                            latitude: latitude,
-                            longitude: longitude,
-                          })
-                        }
-                        style={{ marginBottom: isLast ? 0 : 10 }}
-                      />
-                    );
-                  })}
+                  {currentItinerary &&
+                    [...currentItinerary.points].map((point, i, points) => {
+                      const isLast = i === points.length - 1;
+                      return (
+                        <LatLngInput
+                          onMarkerModalPress={onMarkerModalPress}
+                          inputIndex={i}
+                          key={point.id}
+                          point={point}
+                          isLast={isLast}
+                          showDelete={points.length > 2}
+                          handleDelete={(id) => deletePoint(id)}
+                          onChange={({
+                            latitude = point.latitude,
+                            longitude = point.longitude,
+                          }) =>
+                            onChangeInput({
+                              id: point.id,
+                              latitude: latitude,
+                              longitude: longitude,
+                            })
+                          }
+                          style={{ marginBottom: isLast ? 0 : 10 }}
+                        />
+                      );
+                    })}
                 </View>
                 <SwitchArrowIcon color='#fff' onPress={reverseGeoPoints} />
               </View>
@@ -266,11 +310,27 @@ export function ItineraryPlannedModal({ navigation }) {
       <View style={style.premodalContainer}>
         <View style={style.actionsWrapper}>
           {actions.map((action, i, arr) => (
-            <Pressable key={i} onPress={action.onPress} style={[position.rowSpace, style.action, { borderBottomWidth: i !== arr.length - 1 ? 1 : 0, }]}>
-              <View style={{ padding: 8, borderRadius: 100, backgroundColor: action.iconColor }}>
+            <Pressable
+              key={i}
+              onPress={action.onPress}
+              style={[
+                position.rowSpace,
+                style.action,
+                { borderBottomWidth: i !== arr.length - 1 ? 1 : 0 },
+              ]}
+            >
+              <View
+                style={{
+                  padding: 8,
+                  borderRadius: 100,
+                  backgroundColor: action.iconColor,
+                }}
+              >
                 {action.icon}
               </View>
-              <Text style={{ flex: 1, marginLeft: 10, fontSize: 16 }}>{action.label}</Text>
+              <Text style={{ flex: 1, marginLeft: 10, fontSize: 16 }}>
+                {action.label}
+              </Text>
             </Pressable>
           ))}
         </View>
@@ -297,12 +357,12 @@ const style = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 8,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   action: {
     paddingHorizontal: 20,
     paddingVertical: 11,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)'
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   openedModalContainer: {
     width: '100%',

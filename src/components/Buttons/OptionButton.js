@@ -60,13 +60,11 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
             </Pressable>
           )}
           {favorite && (
-            <Pressable style={[style.buttonRounded, style.smallButton]}>
-              <Ionicons
-                onPress={() => setModalVisible(true)}
-                name={'star'}
-                size={20}
-                color={colors.darkGreen}
-              />
+            <Pressable
+              onPress={() => setModalVisible(true)}
+              style={[style.buttonRounded, style.smallButton]}
+            >
+              <Ionicons name={'star'} size={20} color={colors.darkGreen} />
             </Pressable>
           )}
           {pin && (

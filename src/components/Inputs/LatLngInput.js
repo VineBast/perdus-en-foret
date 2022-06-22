@@ -1,6 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { colors, position } from '../../core/theme';
 import { CircleIcon, MarkerIcon } from '../Icons';
@@ -12,6 +19,8 @@ export function LatLngInput({
   showDelete,
   handleDelete,
   onChange,
+  inputIndex,
+  onMarkerModalPress,
 }) {
   const [latInput, setLatInput] = useState('');
   const [lngInput, setLngInput] = useState('');
@@ -72,7 +81,9 @@ export function LatLngInput({
           value={latInput}
           placeholder='latitude...'
           placeholderTextColor={colors.disabledText}
-          keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'numeric'}
+          keyboardType={
+            Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'numeric'
+          }
         />
         <View style={styles.separator} />
         <TextInput
@@ -81,7 +92,9 @@ export function LatLngInput({
           value={lngInput}
           placeholder='longitude...'
           placeholderTextColor={colors.disabledText}
-          keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'numeric'}
+          keyboardType={
+            Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'numeric'
+          }
         />
         {showDelete && (
           <TouchableOpacity
@@ -93,6 +106,12 @@ export function LatLngInput({
           </TouchableOpacity>
         )}
       </View>
+      <Pressable
+        onPress={() => onMarkerModalPress(inputIndex)}
+        style={styles.addWithMap}
+      >
+        <Ionicons name={'pin'} size={30} color={colors.white} />
+      </Pressable>
     </View>
   );
 }
@@ -100,6 +119,7 @@ export function LatLngInput({
 const styles = StyleSheet.create({
   container: {
     paddingLeft: 27,
+    flexDirection: 'row',
   },
   step: {
     position: 'absolute',
@@ -118,6 +138,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 14,
     height: 58,
+    flex: 1,
   },
   input: {
     color: '#fff',
@@ -136,5 +157,14 @@ const styles = StyleSheet.create({
     padding: 4,
     backgroundColor: '#eee',
     borderRadius: 50,
+  },
+  addWithMap: {
+    backgroundColor: colors.orange,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    height: 58,
+    marginLeft: 5,
+    width: 44,
   },
 });
