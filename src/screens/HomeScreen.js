@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useSelector } from 'react-redux';
@@ -10,10 +10,11 @@ import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 import * as Location from 'expo-location';
 
 export function HomeScreen({ navigation }) {
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState({ coords: { latitude: 48.860708, longitude: 2.337322 } });
   const [errorMsg, setErrorMsg] = useState(null);
+  const googleMap = useRef(null);
   const dataPRS = data.features; //dataPRS.geometry.coordinates[1] = latitude , dataPRS.geometry.coordinates[0] = longitude
-  const [filteredDataPRS, setFilteredDataPRS] = useState(data.features);
+  const [filteredDataPRS, setFilteredDataPRS] = useState(filterDataPRS(location));
 
   useEffect(() => {
     (async () => {
@@ -23,8 +24,11 @@ export function HomeScreen({ navigation }) {
         return;
       }
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
       setFilteredDataPRS(filterDataPRS(location));
+      changeRegion(location);
+      setLocation(location);
+      console.log("Location :");
+      console.log(location);
     })();
   }, []);
   let text = 'Waiting..';
@@ -32,6 +36,17 @@ export function HomeScreen({ navigation }) {
     text = errorMsg;
   }
   console.log(text);
+
+  const changeRegion = (location) => {
+    console.log(location);
+    googleMap.current.animateToRegion({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.504757,
+      longitudeDelta: 0.506866,
+    })
+    console.log('change region');
+  }
 
   function filterDataPRS(location) {
     let latitudeNord = location.coords.latitude + 0.2;
@@ -52,45 +67,43 @@ export function HomeScreen({ navigation }) {
       <OptionButton navigation={navigation} />
       <View style={style.container}>
         {
-          location && (
-            <MapView
-              focusable={true}
-              showsUserLocation={true}
-              followUserLocation={true}
-              showsMyLocationButton={false}
-              showsCompass={false}
-              style={style.map}
-              onRegionChangeComplete={(status) => setFilteredDataPRS(filterDataPRS({ 'coords': { latitude: status.latitude, longitude: status.longitude } }))}
-              initialRegion={{
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                latitudeDelta: 0.504757,
-                longitudeDelta: 0.506866,
-              }}
-            >
-              {filteredDataPRS.map((marker, i) => (
-                <MapView.Marker
-                  key={i}
-                  coordinate={{
-                    latitude: marker.geometry.coordinates[1],
-                    longitude: marker.geometry.coordinates[0],
-                  }}
-                  title={marker.properties.llib_prs}
-                  description={marker.properties.lobs_prs}
-                  pinColor={colors.orange}>
-                  <Callout>
-                    <View>
-                      <Text>{marker.properties.llib_prs}</Text>
-                      <Text>{marker.properties.lobs_prs}</Text>
-                      <Text>Latitude : {marker.geometry.coordinates[1]}</Text>
-                      <Text>Longitude : {marker.geometry.coordinates[0]}</Text>
-                    </View>
-                  </Callout>
-
-                </MapView.Marker>
-              ))}
-            </MapView>
-          )
+          <MapView
+            focusable={true}
+            showsUserLocation={true}
+            followUserLocation={true}
+            showsMyLocationButton={false}
+            showsCompass={false}
+            ref={googleMap}
+            style={style.map}
+            onRegionChangeComplete={(status) => setFilteredDataPRS(filterDataPRS({ 'coords': { latitude: status.latitude, longitude: status.longitude } }))}
+            initialRegion={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.504757,
+              longitudeDelta: 0.506866,
+            }}
+          >
+            {filteredDataPRS.map((marker, i) => (
+              <MapView.Marker
+                key={i}
+                coordinate={{
+                  latitude: marker.geometry.coordinates[1],
+                  longitude: marker.geometry.coordinates[0],
+                }}
+                title={marker.properties.llib_prs}
+                description={marker.properties.lobs_prs}
+                pinColor={colors.orange}>
+                <Callout>
+                  <View>
+                    <Text>{marker.properties.llib_prs}</Text>
+                    <Text>{marker.properties.lobs_prs}</Text>
+                    <Text>Latitude : {marker.geometry.coordinates[1]}</Text>
+                    <Text>Longitude : {marker.geometry.coordinates[0]}</Text>
+                  </View>
+                </Callout>
+              </MapView.Marker>
+            ))}
+          </MapView>
         }
       </View>
       <ItineraryPlannedModal navigation={navigation} />
