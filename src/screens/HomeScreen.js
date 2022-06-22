@@ -63,7 +63,7 @@ export function HomeScreen({ navigation }) {
 
   return (
     <Background>
-      <BackButton goBack={navigation.goBack} />
+      {!user.uid && <BackButton goBack={navigation.goBack} />}
       <OptionButton navigation={navigation} />
       <View style={style.container}>
         <MapView
