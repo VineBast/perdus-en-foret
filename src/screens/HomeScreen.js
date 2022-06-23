@@ -4,13 +4,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useDispatch, useSelector } from 'react-redux';
 import * as data from '../../assets/PRS/PRS_FR.json';
-import { BackButton, Background, OptionButton } from '.././components';
+import {
+  BackButton,
+  Background,
+  MarkerIcon,
+  OptionButton,
+} from '.././components';
 import { addCurrentItinerary, userSelector } from '../redux/userSlice';
 
 import { colors } from '../core/theme';
 import { ItineraryPlannedModal } from './ItineraryPlannedModal';
 
 export function HomeScreen({ navigation }) {
+  //Redux
   const user = useSelector(userSelector).user;
   const dispatch = useDispatch();
 
@@ -176,8 +182,8 @@ export function HomeScreen({ navigation }) {
                   }}
                   title={marker?.properties?.llib_prs}
                   description={marker?.properties?.lobs_prs}
-                  pinColor={colors.orange}
                 >
+                  <MarkerIcon color={colors.orange} />
                   <Callout>
                     <View>
                       <Text>{marker?.properties?.llib_prs}</Text>

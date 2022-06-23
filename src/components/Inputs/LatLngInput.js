@@ -110,7 +110,7 @@ export function LatLngInput({
         onPress={() => onMarkerModalPress(inputIndex)}
         style={styles.addWithMap}
       >
-        <Ionicons name={'pin'} size={30} color={colors.white} />
+        <MarkerIcon color={colors.white} />
       </Pressable>
     </View>
   );

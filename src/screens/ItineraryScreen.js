@@ -8,6 +8,7 @@ import * as dataPRS from '../../assets/PRS/PRS_FR.json';
 import {
   BackButton,
   Background,
+  MarkerIcon,
   OptionButton,
 } from '../components';
 

@@ -11,6 +11,7 @@ import {
   userSelector,
 } from '../../redux/userSlice';
 import { logout } from '../../services/firebase';
+import { MarkerIcon } from '../Icons';
 import { TextInput } from '../Inputs';
 import { SubmitButton } from './SubmitButton';
 
@@ -82,9 +83,7 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
                 { backgroundColor: isPinPress ? colors.red : colors.white },
               ]}
             >
-              <Ionicons
-                name={'pin'}
-                size={20}
+              <MarkerIcon
                 color={isPinPress ? colors.white : colors.darkGreen}
               />
             </Pressable>
