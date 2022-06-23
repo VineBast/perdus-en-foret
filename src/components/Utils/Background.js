@@ -4,7 +4,10 @@ import { theme } from '../../core/theme';
 export function Background({ children, style }) {
   return (
     <View style={[styles.background, style]}>
-      <KeyboardAvoidingView style={styles.container} behavior='padding'>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         {children}
       </KeyboardAvoidingView>
     </View>
