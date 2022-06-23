@@ -17,13 +17,12 @@ export function SettingsScreen({ navigation }) {
           source={{ uri: 'https://docs.ypariset.fr/img/default-avatar.jpeg' }}
         />
         <View style={styles.bodyContent}>
-          <Text style={styles.name}>{user?.firstName}</Text>
+          <Text style={styles.name}>{user?.firstName} {user?.lastName}</Text>
           <Text style={styles.info}>
             {user?.email} • {user?.tel}
           </Text>
           <Text style={styles.description}>
-            Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum
-            electram expetendis, omittam deseruisse consequuntur ius an,
+          En cas d'accident en forêt, composez le 112 et indiquez le numéro du point de rencontre à votre interlocuteur.
           </Text>
           <View style={{ width: '100%', marginTop: 30 }}>
             <SubmitButton
@@ -44,6 +43,7 @@ export function SettingsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.darkGreen,
+    height: '100%',
   },
   bodyContainer: {
     marginTop: 150,

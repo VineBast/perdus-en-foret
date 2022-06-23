@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View, Platform } from 'react-native';
 import { theme } from '../../core/theme';
 
 export function Background({ children, style }) {
@@ -22,6 +22,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: Platform.OS === 'ios' ? 'center' : '',
   },
 });

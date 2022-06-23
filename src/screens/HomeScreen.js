@@ -181,6 +181,7 @@ export function HomeScreen({ navigation }) {
                       <Text>
                         Longitude : {marker?.geometry?.coordinates[0]}
                       </Text>
+                      <Text>ID : <Text style={{color: colors.red}}>{marker?.properties?.iidtn_prs}</Text></Text>
                     </View>
                   </Callout>
                 </MapView.Marker>
