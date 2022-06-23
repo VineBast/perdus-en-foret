@@ -5,12 +5,7 @@ import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import * as dataPRS from '../../assets/PRS/PRS_FR.json';
-import {
-  BackButton,
-  Background,
-  MarkerIcon,
-  OptionButton,
-} from '../components';
+import { BackButton, Background, OptionButton } from '../components';
 
 import MapViewDirections from 'react-native-maps-directions';
 import { GOOGLE_MAPS_APIKEY } from '../../.env.js';
@@ -34,7 +29,7 @@ export function ItineraryScreen({ navigation }) {
   const PRS = filterDataPRS(createItineraryWithStep(itinerary, false), dataPRS);
 
   useEffect(() => {
-    if (Platform.OS === ('ios' || 'android')) {
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
       setIsNative(true);
       if (isStepInProgress) {
         zoomOnMap([
@@ -126,7 +121,7 @@ export function ItineraryScreen({ navigation }) {
               coordinate={coordinate}
               title={'title'}
               description={'description'}
-              pinColor={colors.green}
+              pinColor={colors.darkGreen}
             />
           ))}
           {PRS?.map((coordinate, i) => (
@@ -138,7 +133,7 @@ export function ItineraryScreen({ navigation }) {
               }}
               title={coordinate.properties.llib_prs}
               description={coordinate.properties.lobs_prs}
-              pinColor={colors.darkGreen}
+              pinColor={colors.orange}
             />
           ))}
           {isNative ? (
@@ -153,7 +148,7 @@ export function ItineraryScreen({ navigation }) {
               precision='high'
               mode='WALKING'
               strokeWidth={3}
-              strokeColor={colors.orange}
+              strokeColor={colors.green}
             />
           ) : (
             <MapView.Polyline coordinates={itinerary} />
