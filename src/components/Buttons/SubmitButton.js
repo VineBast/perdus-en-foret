@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { colors } from '../../core/theme';
 
 // Utilisation :
@@ -11,7 +11,7 @@ export function SubmitButton({
   ...props
 }) {
   return (
-    <Pressable
+    <TouchableOpacity
       {...props}
       style={[
         styles.button,
@@ -29,7 +29,7 @@ export function SubmitButton({
       disabled={disabled}
     >
       <Text style={styles.text}>{label}</Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 
