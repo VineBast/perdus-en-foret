@@ -9,7 +9,7 @@ export function filterDataPRS(itinerary, dataPRS) {
     let longitudeOuest = step.longitude - 0.08;
     let longitudeEst = step.longitude + 0.08;
     list.push(
-      dataPRS.features.filter(
+      dataPRS.filter(
         (elm) =>
           elm.geometry.coordinates[0] < longitudeEst &&
           elm.geometry.coordinates[0] > longitudeOuest &&

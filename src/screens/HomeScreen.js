@@ -1,10 +1,10 @@
 import * as Location from 'expo-location';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useDispatch, useSelector } from 'react-redux';
 import * as data from '../../assets/PRS/PRS_FR.json';
-import { BackButton, Background, OptionButton } from '.././components';
+import { Background, OptionButton } from '.././components';
 import { addCurrentItinerary, userSelector } from '../redux/userSlice';
 
 import { colors } from '../core/theme';
@@ -32,20 +32,18 @@ export function HomeScreen({ navigation }) {
   const [isCloselestPRS, setIsCloselestPRS] = useState(true);
   const [isSelectPoint, setIsSelectPoint] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return;
-      }
-      let tempLocation = await Location.getCurrentPositionAsync({});
-      setFilteredDataPRS(filterDataPRS(tempLocation));
-      changeRegion(tempLocation);
-      setLocation(tempLocation);
-      setUserLocation(tempLocation);
-    })();
-  }, [Location]);
+  const onMapLoaded = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permission to access location was denied');
+      return;
+    }
+    let tempLocation = await Location.getCurrentPositionAsync({});
+    setFilteredDataPRS(filterDataPRS(tempLocation));
+    changeRegion(tempLocation);
+    setLocation(tempLocation);
+    setUserLocation(tempLocation);
+  };
 
   const changeRegion = (location) => {
     googleMap.current.animateToRegion({
@@ -134,7 +132,6 @@ export function HomeScreen({ navigation }) {
 
   return (
     <Background>
-      {!user.uid && <BackButton goBack={navigation.goBack} />}
       <OptionButton
         pin={() => setIsCloselestPRS(!isCloselestPRS)}
         navigation={navigation}
@@ -150,6 +147,7 @@ export function HomeScreen({ navigation }) {
             ref={googleMap}
             style={style.map}
             onPress={(event) => onPressOnTheMap(event.nativeEvent.coordinate)}
+            onMapLoaded={onMapLoaded}
             onRegionChangeComplete={(status) =>
               setFilteredDataPRS(
                 filterDataPRS({
@@ -206,7 +204,26 @@ export function HomeScreen({ navigation }) {
                 title={closelestPRS?.properties?.llib_prs}
                 description={closelestPRS?.properties?.lobs_prs}
                 pinColor={colors.red}
-              />
+              >
+                <Callout>
+                  <View>
+                    <Text>{closelestPRS?.properties?.llib_prs}</Text>
+                    <Text>{closelestPRS?.properties?.lobs_prs}</Text>
+                    <Text>
+                      Latitude : {closelestPRS?.geometry?.coordinates[1]}
+                    </Text>
+                    <Text>
+                      Longitude : {closelestPRS?.geometry?.coordinates[0]}
+                    </Text>
+                    <Text>
+                      ID :
+                      <Text style={{ color: colors.red }}>
+                        {closelestPRS?.properties?.iidtn_prs}
+                      </Text>
+                    </Text>
+                  </View>
+                </Callout>
+              </MapView.Marker>
             )}
           </MapView>
         }

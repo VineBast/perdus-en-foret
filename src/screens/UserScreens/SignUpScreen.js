@@ -1,12 +1,20 @@
 import { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import {
   BackButton,
   Background,
+  SubmitButton,
   TextInput,
   Title,
-  SubmitButton
 } from '../../components';
 import { colors } from '../../core/theme';
 import { createUser } from '../../services/firebase';
@@ -30,7 +38,13 @@ export function SignUpScreen({ navigation }) {
           style={{ width: '100%', flex: 1 }}
           keyboardShouldPersistTaps='handled'
         >
-          <View style={{ paddingTop: 80 + getStatusBarHeight(), paddingBottom: 40, paddingHorizontal: 20 }}>
+          <View
+            style={{
+              paddingTop: 80 + getStatusBarHeight(),
+              paddingBottom: 40,
+              paddingHorizontal: 20,
+            }}
+          >
             <Title>Inscription</Title>
             <TextInput
               label='Nom'
@@ -71,22 +85,29 @@ export function SignUpScreen({ navigation }) {
             <SubmitButton
               style={{ padding: 20 }}
               label="S'inscrire"
-              onPress={() => createUser(
-                {
-                  lastName: lastName,
-                  firstName: firstName,
-                  tel: tel,
-                  email: email,
-                  password: password,
-                },
-                navigation,
-
-              )}
+              onPress={() =>
+                createUser(
+                  {
+                    lastName: lastName,
+                    firstName: firstName,
+                    tel: tel,
+                    email: email,
+                    password: password,
+                  },
+                  navigation
+                )
+              }
             />
             <View style={styles.row}>
-              <Text style={{ color: colors.grey3 }}>Vous avez déjà un compte ? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('StartScreen')}>
-                <Text style={{ color: colors.green, fontWeight: 'bold' }}>Se connecter</Text>
+              <Text style={{ color: colors.grey3 }}>
+                Vous avez déjà un compte ?{' '}
+              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('StartScreen')}
+              >
+                <Text style={{ color: colors.green, fontWeight: 'bold' }}>
+                  Se connecter
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

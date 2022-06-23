@@ -26,7 +26,10 @@ export function ItineraryScreen({ navigation }) {
 
   const googleMap = useRef(null);
   const itineraryWithStep = createItineraryWithStep(itinerary, true);
-  const PRS = filterDataPRS(createItineraryWithStep(itinerary, false), dataPRS);
+  const PRS = filterDataPRS(
+    createItineraryWithStep(itinerary, false),
+    dataPRS.features
+  );
 
   useEffect(() => {
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
@@ -121,7 +124,7 @@ export function ItineraryScreen({ navigation }) {
               coordinate={coordinate}
               title={'title'}
               description={'description'}
-              pinColor={colors.darkGreen}
+              pinColor={colors.red}
             />
           ))}
           {PRS?.map((coordinate, i) => (

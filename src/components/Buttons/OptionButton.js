@@ -5,11 +5,7 @@ import uuid from 'react-native-uuid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { colors } from '../../core/theme';
-import {
-  addItinerary,
-  cleanUserOnLogout,
-  userSelector,
-} from '../../redux/userSlice';
+import { addItinerary, userSelector } from '../../redux/userSlice';
 import { logout } from '../../services/firebase';
 import { MarkerIcon } from '../Icons';
 import { TextInput } from '../Inputs';
@@ -39,7 +35,6 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
   };
 
   const onLogoutPress = () => {
-    dispatch(cleanUserOnLogout());
     logout(navigation);
   };
 
@@ -104,12 +99,16 @@ export function OptionButton({ navigation, favorite, print, isOpen, pin }) {
             </Pressable>
           )}
           {pin && (
-            <Pressable style={[style.buttonRounded, style.smallButton]}>
-              <Ionicons
-                onPress={pin}
-                name={'pin'}
-                size={20}
-                color={colors.darkGreen}
+            <Pressable
+              onPress={onPinPress}
+              style={[
+                style.buttonRounded,
+                style.smallButton,
+                { backgroundColor: isPinPress ? colors.red : colors.white },
+              ]}
+            >
+              <MarkerIcon
+                color={isPinPress ? colors.white : colors.darkGreen}
               />
             </Pressable>
           )}

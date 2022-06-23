@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { useDispatch } from 'react-redux';
 import { Background, SubmitButton, TextInput, Title } from '../../components';
@@ -17,7 +23,7 @@ export function StartScreen({ navigation }) {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         dispatch(addUserInRedux(await getUser()));
-        navigation.replace('HomeScreen');
+        navigation.navigate('HomeScreen');
       }
     });
   }, []);
@@ -28,7 +34,13 @@ export function StartScreen({ navigation }) {
         style={{ width: '100%', flex: 1 }}
         keyboardShouldPersistTaps='handled'
       >
-        <View style={{ paddingTop: 40 + getStatusBarHeight(), paddingBottom: 40, paddingHorizontal: 20 }}>
+        <View
+          style={{
+            paddingTop: 40 + getStatusBarHeight(),
+            paddingBottom: 40,
+            paddingHorizontal: 20,
+          }}
+        >
           <Title>Connexion</Title>
           <TextInput
             label='Email'
@@ -63,7 +75,9 @@ export function StartScreen({ navigation }) {
             <Text style={{ color: colors.grey3 }}>
               Vous n'avez pas encore de compte ?{' '}
             </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SignUpScreen')}
+            >
               <Text style={{ color: colors.green, fontWeight: 'bold' }}>
                 S'inscrire
               </Text>

@@ -24,6 +24,7 @@ export function LatLngInput({
 }) {
   const [latInput, setLatInput] = useState('');
   const [lngInput, setLngInput] = useState('');
+  const [isNative, setIsNative] = useState(false);
 
   const filterToNumber = (string) => {
     string = string.replace(/,/g, '.');
@@ -46,6 +47,12 @@ export function LatLngInput({
     setLngInput(point.longitude.toString());
     setLatInput(point.latitude.toString());
   }, [point]);
+
+  useEffect(() => {
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      setIsNative(true);
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -106,12 +113,14 @@ export function LatLngInput({
           </TouchableOpacity>
         )}
       </View>
-      <Pressable
-        onPress={() => onMarkerModalPress(inputIndex)}
-        style={styles.addWithMap}
-      >
-        <MarkerIcon color={colors.white} />
-      </Pressable>
+      {isNative && (
+        <Pressable
+          onPress={() => onMarkerModalPress(inputIndex)}
+          style={styles.addWithMap}
+        >
+          <MarkerIcon color={colors.white} />
+        </Pressable>
+      )}
     </View>
   );
 }
