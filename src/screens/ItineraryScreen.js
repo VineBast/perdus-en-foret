@@ -2,15 +2,22 @@ import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import MapView from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import * as dataPRS from '../../assets/PRS/PRS_FR.json';
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
-import { BackButton, Background, OptionButton } from '../components';
+import * as dataPRS from '../../assets/PRS/PRS_FR.json';
+import {
+  BackButton,
+  Background,
+  OptionButton,
+} from '../components';
 
 import MapViewDirections from 'react-native-maps-directions';
 import { GOOGLE_MAPS_APIKEY } from '../../.env.js';
 import { colors } from '../core/theme';
+import {
+  createItineraryWithStep,
+  filterDataPRS,
+} from '../helpers/itineraryHelper';
 import { userSelector } from '../redux/userSlice';
 
 export function ItineraryScreen({ navigation }) {
@@ -22,8 +29,8 @@ export function ItineraryScreen({ navigation }) {
   const [isNative, setIsNative] = useState(false);
 
   const googleMap = useRef(null);
-  const itineraryWithStep = createItineraryWithStep(true);
-  const PRS = filterDataPRS();
+  const itineraryWithStep = createItineraryWithStep(itinerary, true);
+  const PRS = filterDataPRS(createItineraryWithStep(itinerary, false), dataPRS);
 
   useEffect(() => {
     if (Platform.OS === ('ios' || 'android')) {
@@ -38,77 +45,6 @@ export function ItineraryScreen({ navigation }) {
       }
     }
   }, [isStepInProgress, currentStep]);
-
-  function filterDataPRS() {
-    let list = [];
-    createItineraryWithStep(false).forEach((step) => {
-      let latitudeNord = step.latitude + 0.08;
-      let latitudeSud = step.latitude - 0.08;
-      let longitudeOuest = step.longitude - 0.08;
-      let longitudeEst = step.longitude + 0.08;
-      list.push(
-        dataPRS.features.filter(
-          (elm) =>
-            elm.geometry.coordinates[0] < longitudeEst &&
-            elm.geometry.coordinates[0] > longitudeOuest &&
-            elm.geometry.coordinates[1] < latitudeNord &&
-            elm.geometry.coordinates[1] > latitudeSud
-        )
-      );
-    });
-    return list.flat();
-  }
-
-  function numberStepBetweenTwoPoints(list, index) {
-    const distance = {
-      latitude: Math.abs(list[index].latitude - list[index + 1].latitude),
-      longitude: Math.abs(list[index].longitude - list[index + 1].longitude),
-    };
-
-    return distance.latitude >= distance.longitude
-      ? distance.latitude / 0.5
-      : distance.longitude / 0.5;
-  }
-
-  function createSteps(isInit, index) {
-    const nbrStep = isInit ? 0 : numberStepBetweenTwoPoints(itinerary, index);
-    const list = [
-      {
-        latitude:
-          (itinerary[index].latitude + itinerary[index + 1].latitude) / 2,
-        longitude:
-          (itinerary[index].longitude + itinerary[index + 1].longitude) / 2,
-      },
-    ];
-
-    for (let i = 0; i < Math.pow(2, nbrStep) - 1; i++) {
-      const point = {
-        latitude: (itinerary[index].latitude + list[i].latitude) / 2,
-        longitude: (itinerary[index].longitude + list[i].longitude) / 2,
-      };
-
-      const point2 = {
-        latitude: (list[i].latitude + itinerary[index + 1].latitude) / 2,
-        longitude: (list[i].longitude + itinerary[index + 1].longitude) / 2,
-      };
-
-      list.push(point, point2);
-    }
-
-    return list;
-  }
-
-  function createItineraryWithStep(isInit) {
-    const list = [];
-    itinerary.forEach((_, i) => {
-      list.push({
-        latitude: itinerary[i].latitude,
-        longitude: itinerary[i].longitude,
-      });
-      if (i < itinerary.length - 1) list.push(createSteps(isInit, i));
-    });
-    return list.flat();
-  }
 
   function zoomOnMap(itineraryFit) {
     googleMap.current.fitToCoordinates(itineraryFit, {

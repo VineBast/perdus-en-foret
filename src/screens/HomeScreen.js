@@ -29,6 +29,7 @@ export function HomeScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [closelestPRS, setCloselestPRS] = useState(findClosestPRS());
   const [isCloselestPRS, setIsCloselestPRS] = useState(true);
+  const [isSelectPoint, setIsSelectPoint] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -103,27 +104,31 @@ export function HomeScreen({ navigation }) {
   }
 
   function onPressOnTheMap(coordinate) {
-    dispatch(
-      addCurrentItinerary({
-        ...user.currentItinerary,
-        points: user.currentItinerary.points.map((point, i) => {
-          if (i === inputIdex) {
-            return {
-              ...point,
-              latitude: coordinate.latitude,
-              longitude: coordinate.longitude,
-            };
-          }
-          return point;
-        }),
-      })
-    );
-    setModalVisible(true);
+    if (isSelectPoint) {
+      dispatch(
+        addCurrentItinerary({
+          ...user.currentItinerary,
+          points: user.currentItinerary.points.map((point, i) => {
+            if (i === inputIdex) {
+              return {
+                ...point,
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude,
+              };
+            }
+            return point;
+          }),
+        })
+      );
+      setModalVisible(true);
+      setIsSelectPoint(false);
+    }
   }
 
   function onMarkerPress(index) {
     setModalVisible(false);
     setInputIdex(index);
+    setIsSelectPoint(true);
   }
 
   return (
@@ -181,7 +186,12 @@ export function HomeScreen({ navigation }) {
                       <Text>
                         Longitude : {marker?.geometry?.coordinates[0]}
                       </Text>
-                      <Text>ID : <Text style={{color: colors.red}}>{marker?.properties?.iidtn_prs}</Text></Text>
+                      <Text>
+                        ID :{' '}
+                        <Text style={{ color: colors.red }}>
+                          {marker?.properties?.iidtn_prs}
+                        </Text>
+                      </Text>
                     </View>
                   </Callout>
                 </MapView.Marker>
@@ -194,8 +204,9 @@ export function HomeScreen({ navigation }) {
                 }}
                 title={closelestPRS?.properties?.llib_prs}
                 description={closelestPRS?.properties?.lobs_prs}
-                pinColor={colors.red}
-              />
+              >
+                <MarkerIcon color={colors.red} />
+              </MapView.Marker>
             )}
           </MapView>
         }

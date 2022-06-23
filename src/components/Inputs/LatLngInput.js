@@ -161,9 +161,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.orange,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
+    borderRadius: 8,
     height: 58,
-    marginLeft: 5,
+    marginLeft: 7,
     width: 44,
   },
 });
