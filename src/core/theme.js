@@ -26,7 +26,7 @@ export const colors = {
   mediumGreen: 'rgba(250,250,250,0.10)',
   lightGreen: 'rgba(250,250,250,0.35)',
   disabledText: '#666666',
-  black: '#222222'
+  black: '#222222',
 };
 
 export const general = {

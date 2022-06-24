@@ -1,5 +1,5 @@
 import * as Location from 'expo-location';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,6 +31,13 @@ export function HomeScreen({ navigation }) {
   const [closelestPRS, setCloselestPRS] = useState(findClosestPRS());
   const [isCloselestPRS, setIsCloselestPRS] = useState(true);
   const [isSelectPoint, setIsSelectPoint] = useState(false);
+  const [itineraryMarkers, setItineraryMarkers] = useState(
+    user.currentItinerary.points
+  );
+
+  useEffect(() => {
+    setItineraryMarkers(user.currentItinerary.points);
+  }, [user.currentItinerary]);
 
   const onMapLoaded = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -225,8 +232,25 @@ export function HomeScreen({ navigation }) {
                 </Callout>
               </MapView.Marker>
             )}
+            {itineraryMarkers?.map((marker) => (
+              <MapView.Marker
+                key={marker.id}
+                coordinate={{
+                  latitude: Number(marker?.latitude),
+                  longitude: Number(marker?.longitude),
+                }}
+                pinColor={colors.darkGreen}
+              />
+            ))}
           </MapView>
         }
+      </View>
+      <View
+        style={[style.addPoint, { display: isSelectPoint ? 'flex' : 'none' }]}
+      >
+        <Text style={style.addPointText}>
+          Cliquer sur la carte pour ajouter un point
+        </Text>
       </View>
       <ItineraryPlannedModal
         onMarkerPress={onMarkerPress}
@@ -281,4 +305,14 @@ const style = StyleSheet.create({
     alignSelf: 'center',
     marginTop: -0.5,
   },
+
+  addPoint: {
+    backgroundColor: colors.darkGreen,
+    position: 'absolute',
+    bottom: 200,
+    zIndex: 999,
+    padding: 15,
+    borderRadius: 50,
+  },
+  addPointText: { color: colors.white, fontWeight: 'bold' },
 });
